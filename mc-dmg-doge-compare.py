@@ -1,6 +1,26 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+import argparse
+
+#Code description
+parser = argparse.ArgumentParser(description='Find the best armor build given a situation.')
+
+#Add command-line arguments
+parser.add_argument('damage', metavar='damage', type=float, nargs='1',
+                    help='received damage from an attack')
+parser.add_argument('weapon_damage', metavar='weapon damage', type=float, nargs='1',
+                    help='base damage your held weapon deals')
+parser.add_argument('weapon_speed', metavar='weapon speed', type=float, nargs='1',
+                    help='base attack speed your held weapon has')
+parser.add_argument('bow_damage', metavar='bow damage', type=float, nargs='1',
+                    help='base damage your held bow deals')
+parser.add_argument('arrow_speed', metavar='arrow speed', type=float, nargs='1',
+                    help='base bonus speed for your bow-fired arrows')
+
+#Compile the arguments
+args = parser.parse_args()
+
 #Removes all instances of '' from a list of
 #dictionaries and replaces them with 0.
 def fix_zeros(dict_list):
