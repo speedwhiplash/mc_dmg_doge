@@ -134,3 +134,6 @@ dmypy.json
 
 # JavaScript
 node_modules
+
+# Auth
+mc-dmg-doge-reader.json
