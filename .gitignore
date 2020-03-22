@@ -137,3 +137,6 @@ node_modules
 
 # Auth
 mc-dmg-doge-reader.json
+
+# OS
+.DS_Store
