@@ -1,5 +1,6 @@
 from itertools import product
-from collections import Counter
+from data import armor_stats
+from data import player_stats
 
 def total(base, added, base_percent, added_percent):
 	return((base + added)*(base_percent + added_percent))
@@ -27,6 +28,15 @@ def reduced_damage(reduction):
 
 def combinations(dictionary):
 	return(list(product(*(dictionary[key] for key in dictionary))))
+
+eMax = 0
+allTHEThings = armor_stats()
+print(allTHEThings['helmets'][0].get('Ethereal'))
+
+for i in range(len(allTHEThings['helmets'])):
+    eMax = max(eMax, allTHEThings['helmets'][i]['Ethereal'])
+
+print('eMax', eMax)
 
 # for i in range(20):
 # 	for j in range(17):
