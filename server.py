@@ -1,8 +1,9 @@
-from flask import Flask, url_for
+from flask import Flask
+from flask import render_template
 app = Flask(__name__)
 
-url_for('/static', filename='./static')
+# url_for('/static', filename='./static')
 
 @app.route('/')
 def index():
-    return 'static/index.html'
+    return render_template("./static/index.html")
