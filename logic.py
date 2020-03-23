@@ -29,6 +29,21 @@ def reduced_damage(reduction):
 def combinations(dictionary):
 	return(list(product(*(dictionary[key] for key in dictionary))))
 
+def compare_the_things(idx):
+    current_slots = [
+        all_the_things[0].get('data')[slot_idxs[0]][stat_to_compare],
+        all_the_things[1].get('data')[slot_idxs[1]][stat_to_compare],
+        all_the_things[2].get('data')[slot_idxs[2]][stat_to_compare],
+        all_the_things[3].get('data')[slot_idxs[3]][stat_to_compare],
+        all_the_things[4].get('data')[idx - 1][stat_to_compare]
+    ]
+    total_stat = 0
+    for val in current_slots:
+        total_stat = total_stat + val
+    if (best_stats.get(stat_to_compare) is None) or total_stat > best_stats.get(stat_to_compare):
+        best_stats[stat_to_compare] = total_stat
+        print(total_stat, all_the_things[0].get('data')[slot_idxs[0]].get('Helmet Name'), all_the_things[4].get('data')[slot_idxs[4]].get('Offhand Name'))
+
 # eMax = 0
 # allTHEThings = armor_stats()
 # print(allTHEThings['helmets'][0].get('Ethereal'))
@@ -54,19 +69,7 @@ def deep_compare(data, slot_idxs, curr_slot):
     idx = 0
     while idx < slot_counts[curr_slot]:
         if is_last_slot(curr_slot):
-            current_slots = [
-                all_the_things[0].get('data')[slot_idxs[0]][stat_to_compare],
-                all_the_things[1].get('data')[slot_idxs[1]][stat_to_compare],
-                all_the_things[2].get('data')[slot_idxs[2]][stat_to_compare],
-                all_the_things[3].get('data')[slot_idxs[3]][stat_to_compare],
-                all_the_things[4].get('data')[idx - 1][stat_to_compare]
-            ]
-            total_stat = 0
-            for val in current_slots:
-                total_stat = total_stat + val
-            if (best_stats.get(stat_to_compare) is None) or total_stat > best_stats.get(stat_to_compare):
-                best_stats[stat_to_compare] = total_stat
-                print(total_stat, all_the_things[0].get('data')[slot_idxs[0]])
+            compare_the_things(idx)
         else:
             slot_idxs[curr_slot] = idx
             deep_compare(data, slot_idxs, curr_slot + 1)
