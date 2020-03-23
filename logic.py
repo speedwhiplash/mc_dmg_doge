@@ -29,14 +29,52 @@ def reduced_damage(reduction):
 def combinations(dictionary):
 	return(list(product(*(dictionary[key] for key in dictionary))))
 
-eMax = 0
-allTHEThings = armor_stats()
-print(allTHEThings['helmets'][0].get('Ethereal'))
+# eMax = 0
+# allTHEThings = armor_stats()
+# print(allTHEThings['helmets'][0].get('Ethereal'))
+#
+# for i in range(len(allTHEThings['helmets'])):
+#     eMax = max(eMax, allTHEThings['helmets'][i]['Ethereal'])
+#
+# print('eMax', eMax)
 
-for i in range(len(allTHEThings['helmets'])):
-    eMax = max(eMax, allTHEThings['helmets'][i]['Ethereal'])
+stat_to_compare = 'Ethereal'
+best_idxs = []
+best_stats = {}
+slot_idxs = []
+slot_counts = []
+all_the_things = armor_stats()
+for i in range(len(all_the_things)):
+    slot_idxs.append(-1)
+    slot_counts.append(len(all_the_things[i]['data']))
 
-print('eMax', eMax)
+is_last_slot = lambda a : (len(slot_idxs) - 1) == a
+
+def deep_compare(data, slot_idxs, curr_slot):
+    idx = 0
+    while idx < slot_counts[curr_slot]:
+        if is_last_slot(curr_slot):
+            current_slots = [
+                all_the_things[0].get('data')[slot_idxs[0]][stat_to_compare],
+                all_the_things[1].get('data')[slot_idxs[1]][stat_to_compare],
+                all_the_things[2].get('data')[slot_idxs[2]][stat_to_compare],
+                all_the_things[3].get('data')[slot_idxs[3]][stat_to_compare],
+                all_the_things[4].get('data')[idx - 1][stat_to_compare]
+            ]
+            total_stat = 0
+            for val in current_slots:
+                total_stat = total_stat + val
+            if (best_stats.get(stat_to_compare) is None) or total_stat > best_stats.get(stat_to_compare):
+                best_stats[stat_to_compare] = total_stat
+                print(total_stat, all_the_things[0].get('data')[slot_idxs[0]])
+        else:
+            slot_idxs[curr_slot] = idx
+            deep_compare(data, slot_idxs, curr_slot + 1)
+
+        idx = idx + 1
+
+deep_compare(armor_stats(), slot_idxs, 0)
+print(best_stats)
 
 # for i in range(20):
 # 	for j in range(17):

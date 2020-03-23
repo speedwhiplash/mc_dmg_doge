@@ -40,7 +40,18 @@ boot_data       = fix_zeros(boot_data)
 offhand_data    = fix_zeros(offhand_data)
 
 def armor_stats():
-	return{'helmets' : helmet_data, 'chestplates' : chestplate_data, 'leggings' : legging_data, 'boots' : boot_data, 'offhands' : offhand_data}
+	return[
+        {
+            'name': 'helmets', 'data': helmet_data
+        }, {
+            'name': 'chestplates', 'data': chestplate_data
+        }, {
+            'name': 'leggings', 'data': legging_data
+        }, {
+            'name': 'boots', 'data': boot_data
+        }, {
+            'name': 'offhands', 'data': offhand_data
+        }]
 
 def player_stats():
 	return(player_data)
