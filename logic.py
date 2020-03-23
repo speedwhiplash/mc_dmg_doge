@@ -1,9 +1,22 @@
-from itertools import product
-from data import armor_stats
-from data import player_stats
+def merge_dict(dictionary1, dictionary2):
+	dictionary3 = {**dictionary1,**dictionary2}
+	for key, value in dictionary3.items():
+		if key in dictionary1 and key in dictionary2:
+			if key=='Thorns':
+				dictionary3[key] = max(value, dictionary1[key])
+			else:
+				dictionary3[key] = value + dictionary1[key]
+	return(dictionary3)
 
-def total(base, added, base_percent, added_percent):
-	return((base + added)*(base_percent + added_percent))
+def repeated_merge(list):
+	while len(list) > 1:
+		new_dictionary = merge_dict(list[len(list)-2],list[len(list)-1])
+		del(list[len(list)-2:len(list)])
+		list.append(new_dictionary)
+	return(list)
+
+def total(base, base_percent):
+	return(base*base_percent)
 
 def evasion_reduction():
 	if evasion >= 10:
@@ -26,17 +39,31 @@ def fire_duration(protection):
 def reduced_damage(reduction):
 	return(1-reduction)
 
-def combinations(dictionary):
-	return(list(product(*(dictionary[key] for key in dictionary))))
+def find_max(dictionary, keys, category, initial_best):
+	best = initial_best
+	best_key = 0
+	best_idx = 0
+	for i in range(len(keys)):
+		for j in range(len(dictionary[keys[i]])):
+			current_val = dictionary[keys[i]][j][category]
+			if best < current_val:
+				best = current_val
+				best_key = i
+				best_idx = j
+	return(best_key, best_idx)
 
-eMax = 0
-allTHEThings = armor_stats()
-print(allTHEThings['helmets'][0].get('Ethereal'))
-
-for i in range(len(allTHEThings['helmets'])):
-    eMax = max(eMax, allTHEThings['helmets'][i]['Ethereal'])
-
-print('eMax', eMax)
+def find_min(dictionary, keys, category, initial_best):
+	best = initial_best
+	best_key = 0
+	best_idx = 0
+	for i in range(len(keys)):
+		for j in range(len(dictionary[keys[i]])):
+			current_val = dictionary[keys[i]][j][category]
+			if best > current_val:
+				best = current_val
+				best_key = i
+				best_idx = j
+	return(best_key, best_idx)
 
 # for i in range(20):
 # 	for j in range(17):
