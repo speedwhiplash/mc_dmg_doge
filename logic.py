@@ -1,20 +1,61 @@
-def merge_dict(dictionary1, dictionary2):
-	dictionary3 = {**dictionary1,**dictionary2}
-	dictionary3['Max Fire Protection'] = max(dictionary1['Fire Protection'], dictionary2['Fire Protection'])
-	for key, value in dictionary3.items():
-		if key in dictionary1 and key in dictionary2:
-			if key=='Thorns':
-				dictionary3[key] = max(value, dictionary1[key])
-			else:
-				dictionary3[key] = value + dictionary1[key]
-	return(dictionary3)
 
-def repeated_merge(list):
-	while len(list) > 1:
-		new_dictionary = merge_dict(list[len(list)-2],list[len(list)-1])
-		del(list[len(list)-2:len(list)])
-		list.append(new_dictionary)
-	return(list)
+def one_result(list, slot_idxs, idx, stat):
+    return[one_stat(list, 0, slot_idxs[0], stat),
+           one_stat(list, 1, slot_idxs[1], stat),
+           one_stat(list, 2, slot_idxs[2], stat),
+           one_stat(list, 3, slot_idxs[3], stat),
+           one_stat(list, 4, idx - 1, stat)]
+
+def one_stat(list, slot_idx, iteration, stat):
+	return(list[slot_idx].get('data')[iteration][stat])
+
+# same as sum(values)
+# def add_stats(values):
+# 	total = 0
+#     for val in values:
+#         total += val
+#     return(total)
+#
+# same as max(values)
+# Max Fire Protection = max(Fire Protection)
+# Thorns              = max(Thorns)
+
+def create_slot_counters(list):
+	slot_idxs = []
+	values    = []
+	for i in range(len(list)):
+		slot_idxs.append(-1)
+		values.append(len(list[i].get('data')))
+	return(slot_idxs, values)
+
+def compare(list, slot_idxs, idx, stat, stats, player_stats, damage):
+	stats_dict = {}
+	stat_result = []
+	for i in range(len(stats)):
+		stat_result = one_result(list, slot_idxs, idx, stats[i])
+		stats_dict.update({stats[i] : stat_result})
+	to_check = compare_rules(stat, stats, stats_dict, player_stats, damage)
+	return(to_check)
+
+def deep_compare(list, slot_idxs, values, current_slot, stat, stats, player_stats, how, guess, damage):
+	idx = 0
+	best = float(guess)
+	best_idxs = []
+	best_stats = []
+	is_last_slot = lambda a : (len(slot_idxs) - 1) == a
+	while idx < values[current_slot]:
+		if is_last_slot(current_slot):
+			to_check = compare(list, slot_idxs, idx, stat, stats, player_stats, damage)
+			if min(best, to_check) != best:
+				best = to_check
+				best_idxs.append(idx)
+				best_stats.append(best)
+		else:
+			slot_idxs[current_slot] = idx
+			deep_compare(list, slot_idxs, values, current_slot + 1, stat, stats, player_stats, how, guess, damage)
+
+		idx = idx + 1
+	return(best_idxs, best_stats)
 
 def evasion_reduction(evasion):
 	if evasion >= 10:
@@ -41,6 +82,17 @@ def fire_duration(protection):
 
 def reduced_damage(reduction):
 	return(1-reduction)
+
+def compare_rules(stat, stats, stats_dict, player_stats, damage):
+	if stat == 'melee damage':
+		armor = sum(stats_dict['Armor'])*(sum(stats_dict['Armor Percent']) + player_stats['Armor Percent'])/100.0
+		toughness = sum(stats_dict['Toughness'])*(sum(stats_dict['Toughness Percent']) + player_stats['Toughness Percent'])/100.0
+		health = (sum(stats_dict['Health']) + player_stats['Health'])*(sum(stats_dict['Health Percent']) + player_stats['Health Percent'])/100.0
+		evasion_reduced = damage*reduced_damage(evasion_reduction(sum(stats_dict['Evasion'])))
+		melee_damage = (evasion_reduced*reduced_damage(armor_reduction(armor, toughness, evasion_reduced))*reduced_damage(protection_reduction(sum(stats_dict['Protection']))) + second_wind(sum(stats_dict['Second Wind'])))/health
+		return(melee_damage)
+	else:
+		return(1000)
 
 # for i in range(20):
 # 	for j in range(17):
