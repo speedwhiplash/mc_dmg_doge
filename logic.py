@@ -1,10 +1,10 @@
 
 def one_result(list, slot_idxs, idx, stat):
-    return[one_stat(list, 0, slot_idxs[0], stat),
-           one_stat(list, 1, slot_idxs[1], stat),
-           one_stat(list, 2, slot_idxs[2], stat),
-           one_stat(list, 3, slot_idxs[3], stat),
-           one_stat(list, 4, idx - 1, stat)]
+	return[one_stat(list, 0, slot_idxs[0], stat),
+		   one_stat(list, 1, slot_idxs[1], stat),
+		   one_stat(list, 2, slot_idxs[2], stat),
+		   one_stat(list, 3, slot_idxs[3], stat),
+		   one_stat(list, 4, idx - 1, stat)]
 
 def one_stat(list, slot_idx, iteration, stat):
 	return(list[slot_idx].get('data')[iteration][stat])
