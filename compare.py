@@ -1,6 +1,5 @@
 from data import armor_stats
 from logic import *
-# from itertools import product
 
 import argparse
 
@@ -28,6 +27,8 @@ parser.add_argument('track', choices=['max', 'min'], metavar='track', default='m
 					help='whether to track maximum or minimum of your pick')
 parser.add_argument('initial_best', metavar='guess', default=1000, nargs='?',
 					help='filters your guess by setting a guess condition, usually 1000 if looking for minimum damage')
+parser.add_argument('filters.consumables', metavar='filter consumables', default=None, nargs='?',
+					help='filters consumables, True means must contain, False means must not contain, None is default' )
 
 #Compile the arguments
 args = parser.parse_args()
@@ -60,28 +61,17 @@ elif args.track[0]=='min':
 
 slot_idxs, values = create_slot_counters(all_armor_stats)
 
-best_idxs, best_stats = deep_compare(all_armor_stats, slot_idxs, values, 0, args.stat[0], stats_to_track, player_stats, args.track, args.initial_best, args.damage)
+best_guess(args.initial_best)
 
-print(best_idxs, best_stats)
+deep_compare(all_armor_stats, slot_idxs, values, 0, args.stat[0], stats_to_track, player_stats, args.track, args.damage)
 
-# armor_combinations = list(product(*(armor_stats[key] for key in armor_stats)))
+best_idxs = get_best()
 
-# for i in range(len(armor_combinations)):
-# 	armor_combinations[i] = list(armor_combinations[i])
-# 	armor_combinations[i].append(player_stats)
-
-# best = args.initial_best
-# best_idx = 0
-
-# for i in range(len(armor_combinations)):
-# 	current_combo = armor_combinations[i]
-# 	current_combo = repeated_merge(current_combo)[0]
-# 		armor = current_combo['Armor']*current_combo['Armor Percent']/100.0
-# 		toughness = current_combo['Toughness']*current_combo['Toughness Percent']/100.0
-# 		health = current_combo['Health']*current_combo['Health Percent']/100.0
-# 		evasion_reduced = args.damage*reduced_damage(evasion_reduction(current_combo['Evasion']))
-# 		melee_damage = (evasion_reduced*reduced_damage(armor_reduction(armor, toughness, evasion_reduced))*reduced_damage(protection_reduction(current_combo['Protection'])) + second_wind(current_combo['Second Wind']))/health
-# 	if args.pick[0]=='melee damage' and args.track[0]=='min':
-# 		if best > melee_damage:
-# 			best = melee_damage
-# 			best_idx = i
+print(best_idxs)
+print(
+	all_armor_stats[0][best_idxs[0]]['Helmet Name'],
+	all_armor_stats[1][best_idxs[1]]['Chestplate Name'],
+	all_armor_stats[2][best_idxs[2]]['Leggings Name'],
+	all_armor_stats[3][best_idxs[3]]['Boots Name'],
+	all_armor_stats[4][best_idxs[4]-1]['Offhand Name']
+	)

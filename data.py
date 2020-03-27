@@ -46,7 +46,8 @@ def get_from_spreadsheet():
 		fix_zeros(chestplate_data),
 		fix_zeros(legging_data),
 		fix_zeros(boot_data),
-		fix_zeros(offhand_data)]
+		fix_zeros(offhand_data)
+		]
 
 	file = open('armor_stats.json', 'w')
 	file.write(str(armor_stats()))
@@ -67,7 +68,8 @@ else:
 		armor_data[1],
 		armor_data[2],
 		armor_data[3],
-		armor_data[4]]
+		armor_data[4]
+		]
 
 try:
 	file.close()
