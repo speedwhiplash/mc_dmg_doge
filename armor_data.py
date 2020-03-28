@@ -1,4 +1,5 @@
 import ast
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -59,8 +60,10 @@ def read_armor_data():
         file = open('armor_stats.json', 'r')
         armor_data = file.read()
         armor_data = ast.literal_eval(armor_data)
+        # todo: Put close in another wrapper or something
         file.close()
-    except:
+    except Exception as err:
+        print('you blew it! {err}').format(err)
         armor_data = _get_from_spreadsheet()
 
     if armor_data == [] or armor_data == {} or armor_data is None:
