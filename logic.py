@@ -56,18 +56,18 @@ def is_last_slot(slot_idxs, a):
     return (len(slot_idxs) - 1) == a
 
 
-def deep_compare(list, slot_idxs, values, current_slot, stat, stats, player_stats, how, damage):
-    global best, best_idxs, is_last_slot
+def deep_compare(armor_slots_list, slot_idxs, values, current_slot, stat, stats, player_stats, how, damage):
+    global best, best_idxs
     idx = 0
     while idx < values[current_slot]:
         if is_last_slot(slot_idxs, current_slot):
-            to_check = compare(list, slot_idxs, idx, stat, stats, player_stats, damage)
+            to_check = compare(armor_slots_list, slot_idxs, idx, stat, stats, player_stats, damage)
             if min(best, to_check) != best:
                 best = to_check
                 best_idxs = [slot_idxs[0], slot_idxs[1], slot_idxs[2], slot_idxs[3], idx]
         else:
             slot_idxs[current_slot] = idx
-            deep_compare(list, slot_idxs, values, current_slot + 1, stat, stats, player_stats, how, damage)
+            deep_compare(armor_slots_list, slot_idxs, values, current_slot + 1, stat, stats, player_stats, how, damage)
 
         idx = idx + 1
 
