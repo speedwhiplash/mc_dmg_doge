@@ -56,15 +56,20 @@ def _get_from_spreadsheet():
 
 # First try local file, or build from workbooks
 def read_armor_data():
+    file = {}
     try:
         file = open('armor_stats.json', 'r')
         armor_data = file.read()
         armor_data = ast.literal_eval(armor_data)
-        # todo: Put close in another wrapper or something
-        file.close()
     except Exception as err:
         print('you blew it! {err}').format(err)
         armor_data = _get_from_spreadsheet()
+
+    try:
+        if file.close:
+            file.close()
+    except Exception as err:
+        print('you blew it! {err}').format(err)
 
     if armor_data == [] or armor_data == {} or armor_data is None:
         return _get_from_spreadsheet()

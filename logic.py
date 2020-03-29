@@ -30,15 +30,23 @@ def create_slot_counters(list):
     for i in range(len(list)):
         slot_idxs.append(-1)
         values.append(len(list[i]))
-    return (slot_idxs, values)
+    return slot_idxs, values
 
 
 def compare(list, slot_idxs, idx, stat, stats, player_stats, damage):
-    stats_dict = {}
-    stat_result = []
-    for i in range(len(stats)):
-        stat_result = one_result(list, slot_idxs, idx, stats[i])
-        stats_dict.update({stats[i]: stat_result})
+    stats_dict = {
+        'Armor': one_result(list, slot_idxs, idx, 'Armor'),
+        'Armor Percent': one_result(list, slot_idxs, idx, 'Armor Percent'),
+        'Toughness': one_result(list, slot_idxs, idx, 'Toughness'),
+        'Toughness Percent': one_result(list, slot_idxs, idx, 'Toughness Percent'),
+        'Protection': one_result(list, slot_idxs, idx,  'Protection'),
+        'Health': one_result(list, slot_idxs, idx, 'Health'),
+        'Health Percent': one_result(list, slot_idxs, idx, 'Health Percent'),
+        'Evasion': one_result(list, slot_idxs, idx, 'Evasion'),
+        'Second Wind': one_result(list, slot_idxs, idx, 'Second Wind'),
+    }
+    # for i in range(len(stats)):
+    #     stats_dict[stats[i]] = one_result(list, slot_idxs, idx, stats[i])
     to_check = compare_rules(stat, stats, stats_dict, player_stats, damage)
     return to_check
 
