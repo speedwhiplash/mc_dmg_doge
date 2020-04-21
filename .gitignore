@@ -140,3 +140,6 @@ mc-dmg-doge-reader.json
 
 # OS
 .DS_Store
+
+# Generated Files
+armor_stats.json
