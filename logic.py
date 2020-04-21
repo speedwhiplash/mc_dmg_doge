@@ -94,11 +94,11 @@ def protection_reduction(protection):
 
 
 def regeneration(level, damage):
-    amount = (level) ** 0.5
+    amount = level ** 0.5
     if damage >= amount:
-        return (amount)
+        return amount
     else:
-        return (damage)
+        return damage
 
 
 def fire_duration(protection):
@@ -117,6 +117,6 @@ def compare_rules(stat, stats, stats_dict, player_stats, damage, hits):
         melee_reduced = damage * reduced_damage(evasion_reduction(sum(stats_dict['Evasion']))) * (player_stats['Damage Absorbed'] / 100)
         melee_damage = hits * (melee_reduced * reduced_damage(armor_reduction(armor, toughness, melee_reduced)) * reduced_damage(protection_reduction(sum(stats_dict['Protection']))))
         damage_percent = (melee_damage - regeneration(sum(stats_dict['Regeneration']), melee_damage)) / health
-        return (damage_percent)
+        return damage_percent
     else:
-        return (1000)
+        return 1000
