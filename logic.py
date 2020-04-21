@@ -7,7 +7,7 @@ def one_result(list, slot_idxs, idx, stat):
 
 
 def one_stat(list, slot_idx, iteration, stat):
-	return list[slot_idx][iteration][stat]
+    return list[slot_idx][iteration][stat]
 
 
 def create_slot_counters(list):
@@ -25,7 +25,7 @@ def compare(list, slot_idxs, idx, stat, stats, player_stats, damage, hits):
         'Armor Percent': one_result(list, slot_idxs, idx, 'Armor Percent'),
         'Toughness': one_result(list, slot_idxs, idx, 'Toughness'),
         'Toughness Percent': one_result(list, slot_idxs, idx, 'Toughness Percent'),
-        'Protection': one_result(list, slot_idxs, idx,  'Protection'),
+        'Protection': one_result(list, slot_idxs, idx, 'Protection'),
         'Health': one_result(list, slot_idxs, idx, 'Health'),
         'Health Percent': one_result(list, slot_idxs, idx, 'Health Percent'),
         'Evasion': one_result(list, slot_idxs, idx, 'Evasion'),
@@ -45,7 +45,7 @@ def best_guess(guess):
 
 
 def is_last_slot(slot_idxs, a):
-    return((len(slot_idxs) - 1) == a)
+    return ((len(slot_idxs) - 1) == a)
 
 
 def deep_compare(armor_slots_list, slot_idxs, values, current_slot, stat, stats, player_stats, how, damage, hits):
@@ -70,16 +70,16 @@ def get_best():
 
 
 def evasion_reduction(evasion):
-	if evasion >= 5 and evasion < 10:
-		return(0.20)
-	elif evasion >= 10 and evasion < 15:
-		return(0.40)
-	elif evasion >= 15 and evasion < 20:
-		return(0.60)
-	elif evasion >= 20:
-		return(0.80)
-	else:
-		return(0)
+    if evasion >= 5 and evasion < 10:
+        return (0.20)
+    elif evasion >= 10 and evasion < 15:
+        return (0.40)
+    elif evasion >= 15 and evasion < 20:
+        return (0.60)
+    elif evasion >= 20:
+        return (0.80)
+    else:
+        return (0)
 
 
 def armor_reduction(armor, toughness, damage):
@@ -94,11 +94,11 @@ def protection_reduction(protection):
 
 
 def regeneration(level, damage):
-	amount = (level)**0.5
-	if damage >= amount:
-		return(amount)
-	else:
-		return(damage)
+    amount = (level) ** 0.5
+    if damage >= amount:
+        return (amount)
+    else:
+        return (damage)
 
 
 def fire_duration(protection):
@@ -110,13 +110,13 @@ def reduced_damage(reduction):
 
 
 def compare_rules(stat, stats, stats_dict, player_stats, damage, hits):
-	if stat == 'melee damage':
-		armor = sum(stats_dict['Armor'])*(sum(stats_dict['Armor Percent']) + player_stats['Armor Percent'])/100.0
-		toughness = sum(stats_dict['Toughness'])*(sum(stats_dict['Toughness Percent']) + player_stats['Toughness Percent'])/100.0
-		health = ((sum(stats_dict['Health']) + player_stats['Health'])*(sum(stats_dict['Health Percent']) + player_stats['Health Percent'])/100.0)
-		melee_reduced = damage*reduced_damage(evasion_reduction(sum(stats_dict['Evasion'])))*(player_stats['Damage Absorbed']/100)
-		melee_damage = hits*(melee_reduced*reduced_damage(armor_reduction(armor, toughness, melee_reduced))*reduced_damage(protection_reduction(sum(stats_dict['Protection']))))
-		damage_percent = (melee_damage - regeneration(sum(stats_dict['Regeneration']), melee_damage))/health
-		return(damage_percent)
-	else:
-		return(1000)
+    if stat == 'melee damage':
+        armor = sum(stats_dict['Armor']) * (sum(stats_dict['Armor Percent']) + player_stats['Armor Percent']) / 100.0
+        toughness = sum(stats_dict['Toughness']) * (sum(stats_dict['Toughness Percent']) + player_stats['Toughness Percent']) / 100.0
+        health = ((sum(stats_dict['Health']) + player_stats['Health']) * (sum(stats_dict['Health Percent']) + player_stats['Health Percent']) / 100.0)
+        melee_reduced = damage * reduced_damage(evasion_reduction(sum(stats_dict['Evasion']))) * (player_stats['Damage Absorbed'] / 100)
+        melee_damage = hits * (melee_reduced * reduced_damage(armor_reduction(armor, toughness, melee_reduced)) * reduced_damage(protection_reduction(sum(stats_dict['Protection']))))
+        damage_percent = (melee_damage - regeneration(sum(stats_dict['Regeneration']), melee_damage)) / health
+        return (damage_percent)
+    else:
+        return (1000)

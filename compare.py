@@ -12,7 +12,7 @@ def compare(args):
     player_stats = player_data(args)
 
     stats_to_track = []
-    if args.stat[0]=='melee damage':
+    if args.stat[0] == 'melee damage':
         stats_to_track = ['Armor', 'Armor Percent', 'Toughness', 'Toughness Percent', 'Protection', 'Health', 'Health Percent', 'Evasion', 'Regeneration']
 
     if args.track[0] == 'max':

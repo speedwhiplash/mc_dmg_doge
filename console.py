@@ -1,4 +1,5 @@
 import argparse
+
 from compare import compare
 
 # Code description

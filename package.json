@@ -1,0 +1,22 @@
+{
+  "name": "mc_dmg_doge",
+  "version": "1.0.0",
+  "description": "Damage calculator for Monumenta",
+  "main": "src/app/index.js",
+  "scripts": {
+    "test": "src/test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/speedwhiplash/mc_dmg_doge.git"
+  },
+  "keywords": [
+    "minecraft"
+  ],
+  "author": "SpeedWhiplash",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/speedwhiplash/mc_dmg_doge/issues"
+  },
+  "homepage": "https://github.com/speedwhiplash/mc_dmg_doge#readme"
+}
