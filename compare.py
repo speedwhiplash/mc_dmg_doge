@@ -7,6 +7,8 @@ import argparse
 parser = argparse.ArgumentParser(description='Find the best armor build given a situation.')
 
 #Add command-line arguments
+parser.add_argument('damage_absorbed', metavar='damage absorbed', default=100.0, type=float, nargs='?',
+                    help='base damage absorbed from an attack, usually 100.0.')
 parser.add_argument('damage', metavar='damage', default=30.0, type=float, nargs='?',
                     help='received damage from an attack, highest in the Celsian Isles is 30.0')
 parser.add_argument('weapon_damage', metavar='weapon damage', default=10.0, type=float, nargs='?',
@@ -27,6 +29,8 @@ parser.add_argument('track', choices=['max', 'min'], metavar='track', default='m
 					help='whether to track maximum or minimum of your pick')
 parser.add_argument('initial_best', metavar='guess', default=1000, nargs='?',
 					help='filters your guess by setting a guess condition, usually 1000 if looking for minimum damage')
+parser.add_argument('hits_taken', metavar='hits taken', default=0.0, type=float, nargs='?',
+                    help='number of hits taken in 3 seconds')
 parser.add_argument('filters.consumables', metavar='filter consumables', default=None, nargs='?',
 					help='filters consumables, True means must contain, False means must not contain, None is default' )
 
@@ -35,13 +39,14 @@ args = parser.parse_args()
 
 all_armor_stats = armor_stats()
 
-player_stats = {'Armor Percent' : 100,
+player_stats = {'Damage Absorbed' : args.damage_absorbed,
+                'Armor Percent' : 100,
 				'Toughness Percent' : 100,
 				'Speed' : args.speed,
 				'Speed Percent' : 100,
 				'Health' : args.health,
 				'Health Percent' : 100,
-				'Attack Damage' : args.weapon_damage,
+                'Attack Damage' : args.weapon_damage,
 				'Attack Damage Percent' : 100,
 				'Bow Damage' : args.bow_damage,
 				'Bow Damage Percent' : 100,
@@ -52,7 +57,7 @@ player_stats = {'Armor Percent' : 100,
 
 stats_to_track = []
 if args.stat[0]=='melee damage':
-	stats_to_track = ['Armor', 'Armor Percent', 'Toughness', 'Toughness Percent', 'Protection', 'Health', 'Health Percent', 'Evasion', 'Second Wind']
+	stats_to_track = ['Armor', 'Armor Percent', 'Toughness', 'Toughness Percent', 'Protection', 'Health', 'Health Percent', 'Evasion', 'Regeneration']
 
 if args.track[0]=='max':
 	args.track = max
@@ -63,7 +68,7 @@ slot_idxs, values = create_slot_counters(all_armor_stats)
 
 best_guess(args.initial_best)
 
-deep_compare(all_armor_stats, slot_idxs, values, 0, args.stat[0], stats_to_track, player_stats, args.track, args.damage)
+deep_compare(all_armor_stats, slot_idxs, values, 0, args.stat[0], stats_to_track, player_stats, args.track, args.damage, args.hits_taken)
 
 best_idxs = get_best()
 
