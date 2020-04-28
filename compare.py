@@ -11,20 +11,11 @@ def compare(args):
     all_armor_stats = read_armor_data()
     player_stats = player_data(args)
 
-    stats_to_track = []
-    if args.stat[0] == 'melee damage':
-        stats_to_track = ['Armor', 'Armor Percent', 'Toughness', 'Toughness Percent', 'Protection', 'Health', 'Health Percent', 'Evasion', 'Regeneration']
-
-    if args.track[0] == 'max':
-        args.track = max
-    elif args.track[0] == 'min':
-        args.track = min
+    stats_to_track = ['Armor', 'Armor Percent', 'Toughness', 'Toughness Percent', 'Protection', 'Health', 'Health Percent', 'Evasion', 'Regeneration']
 
     slot_idxs, values = create_slot_counters(all_armor_stats)
 
-    best_guess(args.initial_best)
-
-    deep_compare(all_armor_stats, slot_idxs, values, 0, args.stat[0], stats_to_track, player_stats, args.track, args.damage, args.hits_taken)
+    deep_compare(all_armor_stats, slot_idxs, values, 0, stats_to_track, player_stats, args.damage, args.hits_taken)
     print(f"finished at {time.strftime('%X')}")
 
     best_idxs = get_best()

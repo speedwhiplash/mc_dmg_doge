@@ -61,15 +61,9 @@ def read_armor_data():
         file = open('armor_stats.json', 'r')
         armor_data = file.read()
         armor_data = ast.literal_eval(armor_data)
-    except Exception as err:
-        print('you blew it! {err}').format(err)
+        file.close()
+    except:
         armor_data = _get_from_spreadsheet()
-
-    try:
-        if file.close:
-            file.close()
-    except Exception as err:
-        print('you blew it! {err}').format(err)
 
     if armor_data == [] or armor_data == {} or armor_data is None:
         return _get_from_spreadsheet()

@@ -19,7 +19,7 @@ def create_slot_counters(list):
     return slot_idxs, values
 
 
-def compare(list, slot_idxs, idx, stat, stats, player_stats, damage, hits):
+def compare(list, slot_idxs, idx, stats, player_stats, damage, hits):
     stats_dict = {
         'Armor': one_result(list, slot_idxs, idx, 'Armor'),
         'Armor Percent': one_result(list, slot_idxs, idx, 'Armor Percent'),
@@ -31,35 +31,29 @@ def compare(list, slot_idxs, idx, stat, stats, player_stats, damage, hits):
         'Evasion': one_result(list, slot_idxs, idx, 'Evasion'),
         'Regeneration': one_result(list, slot_idxs, idx, 'Regeneration'),
     }
-    to_check = compare_rules(stat, stats, stats_dict, player_stats, damage, hits)
+    to_check = compare_rules(stats, stats_dict, player_stats, damage, hits)
     return to_check
 
 
-best = 0
+best = 1000
 best_idxs = []
-
-
-def best_guess(guess):
-    global best
-    best = float(guess)
-
 
 def is_last_slot(slot_idxs, a):
     return ((len(slot_idxs) - 1) == a)
 
 
-def deep_compare(armor_slots_list, slot_idxs, values, current_slot, stat, stats, player_stats, how, damage, hits):
+def deep_compare(armor_slots_list, slot_idxs, values, current_slot, stats, player_stats, damage, hits):
     global best, best_idxs
     idx = 0
     while idx < values[current_slot]:
         if is_last_slot(slot_idxs, current_slot):
-            to_check = compare(armor_slots_list, slot_idxs, idx, stat, stats, player_stats, damage, hits)
-            if min(best, to_check) != best:
+            to_check = compare(armor_slots_list, slot_idxs, idx, stats, player_stats, damage, hits)
+            if to_check < best:
                 best = to_check
                 best_idxs = [slot_idxs[0], slot_idxs[1], slot_idxs[2], slot_idxs[3], idx]
         else:
             slot_idxs[current_slot] = idx
-            deep_compare(armor_slots_list, slot_idxs, values, current_slot + 1, stat, stats, player_stats, how, damage, hits)
+            deep_compare(armor_slots_list, slot_idxs, values, current_slot + 1, stats, player_stats, damage, hits)
 
         idx = idx + 1
 
@@ -67,6 +61,14 @@ def deep_compare(armor_slots_list, slot_idxs, values, current_slot, stat, stats,
 def get_best():
     global best_idxs
     return best_idxs
+
+
+def sum_stat_w_per(stat, percent, stats_dict, player_stats):
+    return (sum(stats_dict[stat]) + player_stats[stat]) * (sum(stats_dict[percent]) + player_stats[percent]) / 100.0
+
+
+def sum_stat(stat, stats_dict, player_stats):
+    return sum(stats_dict[stat]) + player_stats[stat]
 
 
 def evasion_reduction(evasion):
@@ -101,22 +103,21 @@ def regeneration(level, damage):
         return damage
 
 
-def fire_duration(protection):
-    return max(0, 1 - (0.15 * protection))
-
-
 def reduced_damage(reduction):
     return 1 - reduction
 
 
-def compare_rules(stat, stats, stats_dict, player_stats, damage, hits):
-    if stat == 'melee damage':
-        armor = sum(stats_dict['Armor']) * (sum(stats_dict['Armor Percent']) + player_stats['Armor Percent']) / 100.0
-        toughness = sum(stats_dict['Toughness']) * (sum(stats_dict['Toughness Percent']) + player_stats['Toughness Percent']) / 100.0
-        health = ((sum(stats_dict['Health']) + player_stats['Health']) * (sum(stats_dict['Health Percent']) + player_stats['Health Percent']) / 100.0)
-        melee_reduced = damage * reduced_damage(evasion_reduction(sum(stats_dict['Evasion']))) * (player_stats['Damage Absorbed'] / 100)
-        melee_damage = hits * (melee_reduced * reduced_damage(armor_reduction(armor, toughness, melee_reduced)) * reduced_damage(protection_reduction(sum(stats_dict['Protection']))))
-        damage_percent = (melee_damage - regeneration(sum(stats_dict['Regeneration']), melee_damage)) / health
-        return damage_percent
-    else:
-        return 1000
+def compare_rules(stats, stats_dict, player_stats, damage, hits):
+    resistance = player_stats['Damage Absorbed']
+    armor = sum_stat_w_per('Armor', 'Armor Percent', stats_dict, player_stats)
+    toughness = sum_stat_w_per('Toughness', 'Toughness Percent', stats_dict, player_stats)
+    protection = sum(stats_dict['Protection'])
+    evasion = sum_stat('Evasion', stats_dict, player_stats)
+    regen = sum_stat('Regeneration', stats_dict, player_stats)
+    health = sum_stat_w_per('Health', 'Health Percent', stats_dict, player_stats)
+
+    melee_reduced = damage * reduced_damage(evasion_reduction(evasion)) * (resistance / 100)
+    melee_damage = hits * (melee_reduced * reduced_damage(armor_reduction(armor, toughness, melee_reduced)) * reduced_damage(protection_reduction(protection)))
+    damage_percent = (melee_damage - regeneration(regen, melee_damage)) / health
+
+    return damage_percent
