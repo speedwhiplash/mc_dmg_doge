@@ -1,3 +1,12 @@
+export interface AllEquipment {
+	boots: Array<Boots>;
+	chestplates: Array<Chestplate>;
+	helmets: Array<Helmet>;
+	leggings: Array<Leggings>;
+	mainhands: Array<Mainhand>;
+	offhands: Array<Offhand>;
+}
+
 export interface Build {
 	boots: Boots;
 	chestplate: Chestplate;

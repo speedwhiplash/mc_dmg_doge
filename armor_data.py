@@ -1,5 +1,5 @@
 import ast
-
+import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -43,8 +43,8 @@ def _get_from_spreadsheet():
         fix_zeros(offhand_data)
     ]
 
-    stats_file = open('armor_stats.json', 'w')
-    stats_file.write(str(armor_data))
+    with open('armor_stats.json', 'w') as stats_file:
+        json.dump(armor_data, stats_file)
     try:
         stats_file.close()
     except Exception as err:
@@ -56,12 +56,11 @@ def _get_from_spreadsheet():
 
 # First try local file, or build from workbooks
 def read_armor_data():
-    file = {}
     try:
-        file = open('armor_stats.json', 'r')
-        armor_data = file.read()
-        armor_data = ast.literal_eval(armor_data)
-        file.close()
+        with open('armor_stats.json') as file:
+            armor_data = json.load(file)
+            armor_data = ast.literal_eval(armor_data)
+            file.close()
     except:
         armor_data = _get_from_spreadsheet()
 
