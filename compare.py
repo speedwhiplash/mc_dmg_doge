@@ -22,9 +22,9 @@ def compare(args):
 
     print(best_idxs)
     print(
-        all_armor_stats[0][best_idxs[0]]['Helmet Name'] + ', ',
-        all_armor_stats[1][best_idxs[1]]['Chestplate Name'] + ', ',
-        all_armor_stats[2][best_idxs[2]]['Leggings Name'] + ', ',
-        all_armor_stats[3][best_idxs[3]]['Boots Name'] + ', ',
-        all_armor_stats[4][best_idxs[4] - 1]['Offhand Name']
+        all_armor_stats[0][best_idxs[0]]['Name'] + ', ',
+        all_armor_stats[1][best_idxs[1]]['Name'] + ', ',
+        all_armor_stats[2][best_idxs[2]]['Name'] + ', ',
+        all_armor_stats[3][best_idxs[3]]['Name'] + ', ',
+        all_armor_stats[4][best_idxs[4] - 1]['Name']
     )

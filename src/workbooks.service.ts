@@ -10,12 +10,11 @@ const TOKEN_PATH = 'token.json';
 @Injectable()
 export class WorkbooksService {
 	armorStats: AllEquipment = {
-		helmets: [],
-		chestplates: [],
+		helmet: [],
+		chestplate: [],
 		leggings: [],
 		boots: [],
-		offhands: [],
-		mainhands: []
+		offhand: []
 	}
 
 	constructor() {
@@ -30,19 +29,18 @@ export class WorkbooksService {
 			}
 			const stats_arrays = JSON.parse(content);
 			const stats = <AllEquipment>{
-				helmets: stats_arrays[0],
-				chestplates: stats_arrays[1],
+				helmet: stats_arrays[0],
+				chestplate: stats_arrays[1],
 				leggings: stats_arrays[2],
 				boots: stats_arrays[3],
-				offhands: stats_arrays[4],
-				mainhands: []
+				offhand: stats_arrays[4],
 			}
 			console.log('armor stats loaded from disk cache with:');
-			console.log(stats.helmets.length + ' helmets');
-			console.log(stats.chestplates.length + ' chestplates');
+			console.log(stats.helmet.length + ' helmet');
+			console.log(stats.chestplate.length + ' chestplate');
 			console.log(stats.leggings.length + ' leggings');
-			console.log(stats.boots.length + ' boots');
-			console.log(stats.offhands.length + ' offhands');
+			console.log(stats.boots.length + ' boot');
+			console.log(stats.offhand.length + ' offhand');
 			this.armorStats = stats;
 		});
 	}

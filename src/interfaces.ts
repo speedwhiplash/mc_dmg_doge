@@ -1,19 +1,50 @@
 export interface AllEquipment {
 	boots: Array<Boots>;
-	chestplates: Array<Chestplate>;
-	helmets: Array<Helmet>;
+	chestplate: Array<Chestplate>;
+	helmet: Array<Helmet>;
 	leggings: Array<Leggings>;
-	mainhands: Array<Mainhand>;
-	offhands: Array<Offhand>;
+	offhand: Array<Offhand>;
 }
 
 export interface Build {
 	boots: Boots;
 	chestplate: Chestplate;
 	helmet: Helmet;
-	legging: Leggings;
-	mainhand: Mainhand;
+	leggings: Leggings;
 	offhand: Offhand;
+}
+
+export interface BuildIndex {
+	boots: number;
+	chestplate: number;
+	helmet: number;
+	leggings: number;
+	offhand: number;
+}
+
+export enum EquipmentFields {
+	Armor = 'Armor',
+	'Armor Percent' = 'Armor Percent',
+// Curses: Array<string>;
+	Damage = 'Damage',
+	'Damage Absorbed' = 'Damage Absorbed',
+	Evasion = 'Evasion',
+	Health = 'Health',
+	'Health Percent' = 'Health Percent',
+	'Hits Taken' = 'Hits Taken',
+	Name = 'Name',
+	Place = 'Place',
+	Protection = 'Protection',
+	Regeneration = 'Regeneration',
+// Slot: Slots;
+	Tier = 'Tier',
+	Toughness = 'Toughness',
+	'Toughness Percent' = 'Toughness Percent',
+	'Type' = 'Type'
+}
+
+export type BestOverallBuildFields = {
+	[key in EquipmentFields]?: number | string;
 }
 
 export enum Tiers {
@@ -32,36 +63,15 @@ export enum Tiers {
 	'Epic' = 'Epic'
 }
 
-export enum Slots {
-	'Chest' = 'Chest',
-	'Feet' = 'Feet',
-	'Head' = 'Head',
-	'Legs' = 'Legs',
-	'Mainhand' = 'Mainhand',
-	'Offhand' = 'Offhand'
+export type Player = {
+	[index in EquipmentFields]: number | string
 }
 
-export interface Equipment {
-	armor: number;
-	armor_per: number;
-	curses: Array<string>;
-	evasion: number;
-	health: number;
-	health_per: number;
-	place: string;
-	name: string;
-	regeneration: number;
-	slot: Slots;
-	tier: Tiers;
-	toughness: number;
-	toughness_per: number;
-	type: string;
+export type Equipment = {
+	[key in EquipmentFields]?: number | string;
 }
 
 export interface Offhand extends Equipment {
-}
-
-export interface Mainhand extends Equipment {
 }
 
 export interface Armor extends Equipment {
@@ -78,4 +88,30 @@ export interface Leggings extends Armor {
 }
 
 export interface Boots extends Armor {
+}
+
+export interface BobPostBodyType {
+	scenario:{
+		Damage: number;
+		'Hits Taken': number;
+		'Damage Absorbed': number;
+	},
+	player:{
+		Armor: number;
+		'Armor Percent': number;
+		Health: number;
+		'Health Percent': number;
+		Toughness: number;
+		'Toughness Percent': number;
+	},
+	mainhand:{
+		Armor: number;
+		'Armor Percent': number;
+		Evasion: number;
+		Regeneration: number;
+		Health: number;
+		'Health Percent': number;
+		Toughness: number;
+		'Toughness Percent': number;
+	}
 }

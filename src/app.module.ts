@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { WorkbooksService } from './workbooks.service';
+import { CompareService } from './compare/compare.service';
 
 @Module({
 	imports: [],
@@ -10,7 +11,8 @@ import { WorkbooksService } from './workbooks.service';
 	],
 	providers: [
 		AppService,
-		WorkbooksService
+		WorkbooksService,
+		CompareService
 	],
 })
 export class AppModule {
