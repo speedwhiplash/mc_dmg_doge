@@ -36,7 +36,7 @@ export class CompareService {
 	private deepCompare(allEquipment: AllEquipment, indexes: BuildIndex, currentSlot, bobStats: BobPostBodyType): void {
 		const slots = ['boots', 'chestplate', 'helmet', 'leggings', 'offhand'];
 		let idx = 0;
-		while (idx < allEquipment[slots[currentSlot]].length - 1) {
+		while (idx < allEquipment[slots[currentSlot]].length) {
 			if (currentSlot === 4) {
 				const score = this.getScore(allEquipment, indexes, idx, bobStats);
 				if (score < this.bestScore) {
