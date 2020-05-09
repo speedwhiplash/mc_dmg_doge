@@ -7,8 +7,6 @@ import { CompareService } from './compare/compare.service';
 import { WorkbooksService } from './workbooks.service';
 import { ShellService } from './shell/shell.service';
 
-const exec = require('child_process').exec;
-
 @Controller()
 export class AppController {
 	constructor(
@@ -28,6 +26,7 @@ export class AppController {
 	async updateStats() {
 		await this.shellService.execShellCommand('rm -f armor_stats.json');
 		await this.shellService.execShellCommand('python3 prepare.py');
+		this.workbooksService.readArmorStats();
 		console.log('reloaded armor-stats')
 		return {status: 200, statusText: 'reloaded armor-stats'}
 	}
