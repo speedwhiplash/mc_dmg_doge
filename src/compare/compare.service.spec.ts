@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CompareService } from './compare.service';
-import { AllEquipment, BobPostBodyType, EquipmentFields } from '../interfaces';
+import { AllEquipment, IBobInputs, EquipmentFields } from '../interfaces';
 
 const armorStats = require('../../armor_stats.json');
 
@@ -30,7 +30,7 @@ describe('CompareService', () => {
 	});
 
 	it('should compare', (done) => {
-		let mockBob = {scenario:{}, player:{}, mainhand:{}} as BobPostBodyType;
+		let mockBob = {scenario:{}, player:{}, mainhand:{}} as IBobInputs;
 		mockBob.scenario[EquipmentFields.Damage] = 30;
 		mockBob.scenario[EquipmentFields['Hits Taken']] = 1;
 		mockBob.scenario[EquipmentFields['Damage Absorbed']] = 100;
@@ -51,7 +51,7 @@ describe('CompareService', () => {
 		mockBob.mainhand[EquipmentFields.Toughness] = 0;
 		mockBob.mainhand[EquipmentFields['Toughness Percent']] = 0;
 
-		service.bestOverallBuild(rebuildEquipment(armorStats), mockBob).subscribe(build => {
+		service.bobDefense(rebuildEquipment(armorStats), mockBob).subscribe(build => {
 			expect(rebuildEquipment(armorStats).boots[build.boots].Name).toBe('Winter\'s March');
 			expect(rebuildEquipment(armorStats).chestplate[build.chestplate].Name).toBe('Archangel\'s Mail');
 			expect(rebuildEquipment(armorStats).helmet[build.helmet].Name).toBe('Frost Giant\'s Crown');

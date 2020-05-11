@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
-import { AllEquipment, BobPostBodyType, BuildIndex } from './interfaces';
+import { AllEquipment, IBobInputs, BuildIndex } from './interfaces';
 import { AppService } from './app.service';
-import { CompareService } from './compare/compare.service';
+import { BuildScores, CompareService } from './compare/compare.service';
 import { WorkbooksService } from './workbooks.service';
 import { ShellService } from './shell/shell.service';
 
@@ -36,8 +36,10 @@ export class AppController {
 		return this.workbooksService.armorStats;
 	}
 
-	@Post('/bestOverallBuild')
-	bestOverallBuild(@Body() bobParams: BobPostBodyType): Observable<BuildIndex> {
-		return this.compareService.bestOverallBuild(this.workbooksService.armorStats, bobParams);
+	@Post('/bob/:type')
+	bestOverallBuild(@Body() bobParams: IBobInputs, @Param() params): Observable<BuildScores> {
+		if (params.type === 'defense') {
+			return this.compareService.bobDefense(this.workbooksService.armorStats, bobParams);
+		}
 	}
 }
