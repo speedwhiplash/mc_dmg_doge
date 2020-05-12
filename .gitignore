@@ -131,6 +131,7 @@ dmypy.json
 # IDE
 /.idea/
 /mc_dmg_doge.iml
+*.code_workspace
 
 # JavaScript
 node_modules

@@ -12,23 +12,19 @@ export class AppController {
 	constructor(
 		private readonly appService: AppService,
 		private readonly compareService: CompareService,
-		private readonly shellService: ShellService,
 		private readonly workbooksService: WorkbooksService,
 	) {
 	}
 
 	@Get()
 	basicThing() {
-		return {message: 'You\'re dumb!'};
+		return { message: 'You\'re dumb!' };
 	}
 
 	@Get('/update-stats')
 	async updateStats() {
-		await this.shellService.execShellCommand('rm -f armor_stats.json');
-		await this.shellService.execShellCommand('python3 prepare.py');
-		this.workbooksService.readArmorStats();
-		console.log('reloaded armor-stats')
-		return {status: 200, statusText: 'reloaded armor-stats'}
+		await this.appService.updateStats();
+		return { status: 200, statusText: 'reloaded armor-stats' }
 	}
 
 	@Get('/equipment')
