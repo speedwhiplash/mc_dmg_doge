@@ -10,12 +10,14 @@ interface ScorePerField {
 	[key: string]: number
 }
 
+const TOP_NUM_OF_SCORES = 10;
+
 @Injectable()
 export class CompareService {
-	readonly TOP_NUM_OF_SCORES = 10;
 	bestScore = 9;
 	bestScores: BuildScores = {};
 	worstBestScore = 10;
+	numScores = 0;
 
 	bobDefense(allEquipment: AllEquipment, bobStats: IBobInputs): Observable<BuildScores> {
 		console.time('build');
@@ -59,7 +61,7 @@ export class CompareService {
 					player: bobStats.player,
 					mainhand: bobStats.mainhand
 				}
-				this.logScore(this.getScore(build, bobStats), {...indexes, offhand: idx});
+				this.recordBestScores(this.getScore(build, bobStats), {...indexes, offhand: idx});
 			} else {
 				indexes[slots[currentSlot]] = idx;
 				this.deepCompare(allEquipment, indexes, currentSlot + 1, bobStats);
@@ -134,20 +136,20 @@ export class CompareService {
 	private resetScores() {
 		this.bestScore = 10;
 		this.bestScores = {};
+		this.numScores = 0;
 		this.worstBestScore = 9;
 	}
 
-	private logScore(score: number, indexes: BuildIndex) {
-		if (score < this.worstBestScore) {
+	private recordBestScores(score: number, indexes: BuildIndex) {
+		if (this.numScores > TOP_NUM_OF_SCORES || score < this.worstBestScore) {
+			// Allow multiple builds for same score
 			this.bestScores[score] = [...(this.bestScores[score] || []), indexes];
+
 			let scores = Object.keys(this.bestScores).map(score => +score).sort();
-			if (scores.length > this.TOP_NUM_OF_SCORES) {
-				delete this.bestScores[scores[this.TOP_NUM_OF_SCORES]];
-			}
+			delete this.bestScores[scores[TOP_NUM_OF_SCORES]];
 			this.worstBestScore = scores[scores.length - 1];
 			this.bestScore = scores[0];
-			console.log('worst best', this.worstBestScore);
-			console.log('best', this.bestScore);
+
 		}
 	}
 }
