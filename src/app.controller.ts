@@ -1,11 +1,10 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
-import { AllEquipment, IBobInputs, BuildIndex } from './interfaces';
+import { AllEquipment, BuildScores, IBobInputs } from './interfaces';
 import { AppService } from './app.service';
-import { BuildScores, CompareService } from './compare/compare.service';
+import { CompareService } from './compare/compare.service';
 import { WorkbooksService } from './workbooks.service';
-import { ShellService } from './shell/shell.service';
 
 @Controller()
 export class AppController {
@@ -18,13 +17,13 @@ export class AppController {
 
 	@Get()
 	basicThing() {
-		return { message: 'You\'re dumb!' };
+		return {message: 'You\'re dumb!'};
 	}
 
 	@Get('/update-stats')
 	async updateStats() {
 		await this.appService.updateStats();
-		return { status: 200, statusText: 'reloaded armor-stats' }
+		return {status: 200, statusText: 'reloaded armor-stats'}
 	}
 
 	@Get('/equipment')

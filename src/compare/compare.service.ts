@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { AllEquipment, BuildIndex, HandheldFields, IBobInputs, IBuild } from '../interfaces';
+import { AllEquipment, BuildIndex, BuildScores, DefenseScores, HandheldFields, IBobInputs, IBuild } from '../interfaces';
 import { Observable, of } from 'rxjs';
 
-export interface BuildScores {
-	[key: number]: BuildIndex[]
-}
-
 interface ScorePerField {
-	[key: string]: number
+	[key: string]: number;
 }
 
 const TOP_NUM_OF_SCORES = 10;
@@ -39,11 +35,11 @@ export class CompareService {
 		console.log(`
 	best score: ${bestIdx}
 	best build: 
-	${allEquipment.boots[scores[bestIdx][0].boots].Name}, 
-	${allEquipment.chestplate[scores[bestIdx][0].chestplate].Name},
-	${allEquipment.helmet[scores[bestIdx][0].helmet].Name},
-	${allEquipment.leggings[scores[bestIdx][0].leggings].Name},
-	${allEquipment.offhand[scores[bestIdx][0].offhand].Name}`
+	${allEquipment.boots[scores[bestIdx][0].build.boots].Name}, 
+	${allEquipment.chestplate[scores[bestIdx][0].build.chestplate].Name},
+	${allEquipment.helmet[scores[bestIdx][0].build.helmet].Name},
+	${allEquipment.leggings[scores[bestIdx][0].build.leggings].Name},
+	${allEquipment.offhand[scores[bestIdx][0].build.offhand].Name}`
 		);
 	}
 
@@ -70,7 +66,7 @@ export class CompareService {
 		}
 	}
 
-	private getScore(build: IBuild, bobStats): number {
+	private getScore(build: IBuild, bobStats): DefenseScores {
 		let fields = [...Object.keys(HandheldFields), 'Protection'];
 		let fieldScore: ScorePerField = {};
 
@@ -88,18 +84,19 @@ export class CompareService {
 			(build.mainhand[field] || 0);
 	}
 
-	private totalDefenseScore(fieldScore: ScorePerField, bobStats) {
+	private totalDefenseScore(fieldScore: ScorePerField, bobStats): DefenseScores {
 		const resistance = bobStats.scenario['Damage Absorbed'];
 		const armor = fieldScore.Armor * fieldScore['Armor Percent'] / 100;
 		const toughness = fieldScore.Toughness * fieldScore['Toughness Percent'] / 100;
 		const protection = fieldScore.Protection;
 		const evasion = fieldScore.Evasion;
-		const regen = fieldScore.Regeneration;
+		const regeneration = fieldScore.Regeneration;
 		const health = fieldScore.Health * fieldScore['Health Percent'] / 100;
 
 		const melee_reduced = bobStats.scenario.Damage * this.reduced_damage(this.evasion_reduction(evasion)) * (resistance / 100);
 		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)));
-		return (melee_damage - this.regeneration(regen)) / health;
+		const score = (melee_damage - this.regeneration(regeneration)) / health;
+		return {armor, toughness, protection, evasion, regeneration, health, score};
 	}
 
 	private armor_reduction(armor, toughness, damage) {
@@ -139,10 +136,10 @@ export class CompareService {
 		this.worstBestScore = 9;
 	}
 
-	private recordBestScores(score: number, indexes: BuildIndex) {
-		if (this.numScores > TOP_NUM_OF_SCORES || score < this.worstBestScore) {
+	private recordBestScores(defenseScores: DefenseScores, indexes: BuildIndex) {
+		if (this.numScores > TOP_NUM_OF_SCORES || defenseScores.score < this.worstBestScore) {
 			// Allow multiple builds for same score
-			this.bestScores[score] = [...(this.bestScores[score] || []), indexes];
+			this.bestScores[defenseScores.score] = [...(this.bestScores[defenseScores.score] || []), {build: indexes, scores: defenseScores}];
 
 			let scores = Object.keys(this.bestScores).map(score => +score).sort();
 			delete this.bestScores[scores[TOP_NUM_OF_SCORES]];
