@@ -99,7 +99,7 @@ export class CompareService {
 
 		const melee_reduced = bobStats.scenario.Damage * this.reduced_damage(this.evasion_reduction(evasion)) * (resistance / 100);
 		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)));
-		return (melee_damage - this.regeneration(regen, melee_damage)) / health;
+		return (melee_damage - this.regeneration(regen)) / health;
 	}
 
 	private armor_reduction(armor, toughness, damage) {
@@ -128,9 +128,8 @@ export class CompareService {
 		return 1 - reduction;
 	}
 
-	private regeneration(level, damage) {
-		const amount = Math.sqrt(level);
-		return damage > amount ? amount : damage;
+	private regeneration(level) {
+		return Math.floor(Math.sqrt(level));
 	}
 
 	private resetScores() {
