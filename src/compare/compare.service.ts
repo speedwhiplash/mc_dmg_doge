@@ -93,8 +93,8 @@ export class CompareService {
 		const regeneration = fieldScore.Regeneration;
 		const health = fieldScore.Health * fieldScore['Health Percent'] / 100;
 
-		const melee_reduced = bobStats.scenario.Damage * this.reduced_damage(this.evasion_reduction(evasion)) * (resistance / 100);
-		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)));
+		const melee_reduced = bobStats.scenario.Damage * this.reduced_damage(this.evasion_reduction(evasion));
+		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)) * (resistance / 100));
 		const score = (melee_damage - this.regeneration(regeneration)) / health;
 		return {armor, toughness, protection, evasion, regeneration, health, score};
 	}
