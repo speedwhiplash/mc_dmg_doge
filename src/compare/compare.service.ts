@@ -6,7 +6,7 @@ interface ScorePerField {
 	[key: string]: number;
 }
 
-const TOP_NUM_OF_SCORES = 10;
+const TOP_NUM_OF_SCORES = 15;
 
 @Injectable()
 export class CompareService {
@@ -95,7 +95,8 @@ export class CompareService {
 
 		const melee_reduced = bobStats.scenario.Damage * this.reduced_damage(this.evasion_reduction(evasion));
 		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)) * (resistance / 100));
-		const score = (melee_damage - this.regeneration(regeneration)) / health;
+		const percent_score = (melee_damage - this.regeneration(regeneration) - bobStats.scenario['Health Regained']) / health;
+		const score = percent_score - bobStats.scenario['Health Regain Percent'];
 		return {armor, toughness, protection, evasion, regeneration, health, score};
 	}
 

@@ -34,6 +34,8 @@ describe('CompareService', () => {
 		mockBob.scenario[EquipmentFields.Damage] = 30;
 		mockBob.scenario[EquipmentFields['Hits Taken']] = 1;
 		mockBob.scenario[EquipmentFields['Damage Absorbed']] = 100;
+		mockBob.scenario[EquipmentFields['Health Regained']] = 0;
+		mockBob.scenario[EquipmentFields['Health Regain Percent']] = 0;
 
 		mockBob.player[EquipmentFields.Armor] = 0;
 		mockBob.player[EquipmentFields['Armor Percent']] = 100;
