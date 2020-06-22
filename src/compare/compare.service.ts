@@ -19,7 +19,7 @@ export class CompareService {
 		console.time('build');
 		this.resetScores();
 
-		let indexes: BuildIndex = {helmet: -1, chestplate: -1, leggings: -1, boots: -1, offhand: -1};
+		let indexes: BuildIndex = { helmet: -1, chestplate: -1, leggings: -1, boots: -1, offhand: -1 };
 		this.deepCompare(allEquipment, indexes, 0, bobStats);
 
 		this.logBuildScore(this.bestScores, allEquipment);
@@ -57,7 +57,7 @@ export class CompareService {
 					player: bobStats.player,
 					mainhand: bobStats.mainhand
 				}
-				this.recordBestScores(this.getScore(build, bobStats), {...indexes, offhand: idx});
+				this.recordBestScores(this.getScore(build, bobStats), { ...indexes, offhand: idx });
 			} else {
 				indexes[slots[currentSlot]] = idx;
 				this.deepCompare(allEquipment, indexes, currentSlot + 1, bobStats);
@@ -95,9 +95,15 @@ export class CompareService {
 
 		const melee_reduced = bobStats.scenario.Damage * this.reduced_damage(this.evasion_reduction(evasion));
 		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)) * (resistance / 100));
-		const percent_score = (melee_damage - this.regeneration(regeneration) - bobStats.scenario['Health Regained']) / health;
-		const score = percent_score - (bobStats.scenario['Health Regain Percent'] / 100);
-		return {armor, toughness, protection, evasion, regeneration, health, score};
+		const health_score = melee_damage / health;
+		var score = 1;
+		if (health_score >= 1) {
+			score = 1;
+		} else {
+			const percent_score = (melee_damage - this.regeneration(regeneration) - bobStats.scenario['Health Regained']) / health;
+			score = percent_score - (bobStats.scenario['Health Regain Percent'] / 100);
+		}
+		return { armor, toughness, protection, evasion, regeneration, health, score };
 	}
 
 	private armor_reduction(armor, toughness, damage) {
@@ -140,7 +146,7 @@ export class CompareService {
 	private recordBestScores(defenseScores: DefenseScores, indexes: BuildIndex) {
 		if (this.numScores > TOP_NUM_OF_SCORES || defenseScores.score < this.worstBestScore) {
 			// Allow multiple builds for same score
-			this.bestScores[defenseScores.score] = [...(this.bestScores[defenseScores.score] || []), {build: indexes, scores: defenseScores}];
+			this.bestScores[defenseScores.score] = [...(this.bestScores[defenseScores.score] || []), { build: indexes, scores: defenseScores }];
 
 			let scores = Object.keys(this.bestScores).map(score => +score).sort();
 			delete this.bestScores[scores[TOP_NUM_OF_SCORES]];
