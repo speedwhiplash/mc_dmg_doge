@@ -61,7 +61,8 @@ export interface IScenarioInputs {
 	'Hits Taken': number;
 	'Damage Absorbed': number;
 	'Health Regained': number;
-  	'Health Regain Percent': number;
+	'Health Regain Percent': number;
+	'Crit Chance' : number;   
 }
 
 export enum PlayerFields {
@@ -71,6 +72,8 @@ export enum PlayerFields {
 	'Health Percent' = 'Health Percent',
 	Toughness = 'Toughness',
 	'Toughness Percent' = 'Toughness Percent',
+	'Attack Speed' = 'Attack Speed',
+	'Attack Speed Percent' = 'Attack Speed Percent'
 }
 
 export type PlayerInputsType = {
@@ -87,11 +90,14 @@ export enum DefenceFields {
 export enum HandheldFields {
 	Armor = 'Armor',
 	'Armor Percent' = 'Armor Percent',
+	'Attack Speed' = 'Attack Speed',
+	'Attack Speed Percent' = 'Attack Speed Percent',
 	Damage = 'Damage',
 	'Damage Absorbed' = 'Damage Absorbed',
 	Evasion = 'Evasion',
 	Health = 'Health',
 	'Health Percent' = 'Health Percent',
+	'Life Drain' = 'Life Drain',
 	Regeneration = 'Regeneration',
 	Toughness = 'Toughness',
 	'Toughness Percent' = 'Toughness Percent',

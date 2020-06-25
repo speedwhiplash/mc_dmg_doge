@@ -7,6 +7,7 @@ interface ScorePerField {
 }
 
 const TOP_NUM_OF_SCORES = 15;
+const REACTION_TIME = 0.2;
 
 @Injectable()
 export class CompareService {
@@ -91,7 +92,10 @@ export class CompareService {
 		const protection = fieldScore.Protection;
 		const evasion = fieldScore.Evasion;
 		const regeneration = fieldScore.Regeneration;
+		const life_drain = fieldScore['Life Drain'];
 		const health = fieldScore.Health * fieldScore['Health Percent'] / 100;
+		const attack_speed = fieldScore['Attack Speed'] * fieldScore['Attack Speed Percent'] / 100;
+		const crit_chance = bobStats.scenario['Crit Chance'] / 100;
 
 		const melee_reduced = bobStats.scenario.Damage * this.reduced_damage(this.evasion_reduction(evasion));
 		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)) * (resistance / 100));
@@ -100,7 +104,7 @@ export class CompareService {
 		if (health_score >= 1) {
 			score = 1;
 		} else {
-			const percent_score = (melee_damage - this.regeneration(regeneration) - bobStats.scenario['Health Regained']) / health;
+			const percent_score = (melee_damage - this.regeneration(regeneration) - this.life_drain(life_drain, attack_speed, crit_chance) - bobStats.scenario['Health Regained']) / health;
 			score = percent_score - (bobStats.scenario['Health Regain Percent'] / 100);
 		}
 		return { armor, toughness, protection, evasion, regeneration, health, score };
@@ -134,6 +138,20 @@ export class CompareService {
 
 	private regeneration(level) {
 		return Math.floor(Math.sqrt(level));
+	}
+
+	private life_drain(level, attack_speed, crit_chance) {
+		if (attack_speed == 0) {
+			return 0;
+		} else { 
+			const attack_speed_delayed = 1 / ((1 / attack_speed) + REACTION_TIME);
+			const attacks = Math.floor(attack_speed_delayed + 1);
+
+			const life_drain_heal_crit = crit_chance * Math.sqrt(level);
+			const life_drain_heal = 0.25 * (1 - crit_chance) * Math.sqrt(level);
+			
+			return attacks * (life_drain_heal_crit + life_drain_heal);
+		}
 	}
 
 	private resetScores() {
