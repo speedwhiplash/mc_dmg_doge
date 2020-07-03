@@ -144,8 +144,8 @@ export class CompareService {
 		if (attack_speed == 0) {
 			return 0;
 		} else { 
-			const attack_speed_delayed = 1 / ((1 / attack_speed) + PLAYER_REFLEX_DELAY);
-			const attacks = Math.floor(attack_speed_delayed + 1);
+			const attack_speed_delayed = Math.min(2, 1 / ((1 / attack_speed) + PLAYER_REFLEX_DELAY));
+            const attacks = Math.floor((1 / (0.5 * Math.ceil((1 / attack_speed_delayed) / 0.5))) + 1);
 
 			const life_drain_heal_crit = crit_chance * Math.sqrt(level);
 			const life_drain_heal = 0.25 * (1 - crit_chance) * Math.sqrt(level);
