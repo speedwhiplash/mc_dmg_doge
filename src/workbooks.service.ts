@@ -2,10 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { AllEquipment } from './interfaces';
 
 const fs = require('fs');
-const readline = require('readline');
-const { google } = require('googleapis');
-const SCOPES = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive'];
-const TOKEN_PATH = 'token.json';
 
 @Injectable()
 export class WorkbooksService {
@@ -18,13 +14,13 @@ export class WorkbooksService {
 	}
 
 	constructor() {
-		this.readArmorStats();
 	}
 
-	readArmorStats() {
-		return fs.readFile('./armor_stats.json', "utf8", (err, content) => {
+	async readArmorStats(): Promise<void> {
+		await fs.readFile('./armor_stats.json', "utf8", (err, content) => {
 			if (err) {
-				return console.log('Error reading armor_stats:', err);
+				console.log('Error reading armor_stats:', err);
+				return err;
 			}
 			const stats_arrays = JSON.parse(content);
 			const stats = <AllEquipment>{
@@ -43,15 +39,4 @@ export class WorkbooksService {
 			this.armorStats = stats;
 		});
 	}
-
-	printDocTitle(auth) {
-		const docs = google.docs({ version: 'v1', auth });
-		docs.documents.get({
-			documentId: '195j9eDD3ccgjQRttHhJPymLJUCOUjs-jmwTrekvdjFE',
-		}, (err, res) => {
-			if (err) return console.log('The API returned an error: ' + err);
-			console.log(`The title of the document is: ${res.data.title}`);
-		});
-	}
-
 }

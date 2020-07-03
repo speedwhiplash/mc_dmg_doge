@@ -135,6 +135,8 @@ dmypy.json
 
 # JavaScript
 node_modules
+yarn.lock
+package-lock.json
 
 # Auth
 mc-dmg-doge-reader.json

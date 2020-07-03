@@ -13,6 +13,7 @@ export class AppController {
 		private readonly compareService: CompareService,
 		private readonly workbooksService: WorkbooksService,
 	) {
+		this.updateStats();
 	}
 
 	@Get()
