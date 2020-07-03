@@ -7,7 +7,7 @@ interface ScorePerField {
 }
 
 const TOP_NUM_OF_SCORES = 15;
-const REACTION_TIME = 0.2;
+const PLAYER_REFLEX_DELAY = 0.2;
 
 @Injectable()
 export class CompareService {
@@ -144,7 +144,7 @@ export class CompareService {
 		if (attack_speed == 0) {
 			return 0;
 		} else { 
-			const attack_speed_delayed = 1 / ((1 / attack_speed) + REACTION_TIME);
+			const attack_speed_delayed = 1 / ((1 / attack_speed) + PLAYER_REFLEX_DELAY);
 			const attacks = Math.floor(attack_speed_delayed + 1);
 
 			const life_drain_heal_crit = crit_chance * Math.sqrt(level);
