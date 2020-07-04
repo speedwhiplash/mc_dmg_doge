@@ -86,7 +86,7 @@ export class CompareService {
 	}
 
 	private totalDefenseScore(fieldScore: ScorePerField, bobStats): DefenseScores {
-		const resistance = bobStats.scenario['Damage Absorbed'];
+		const resistance = bobStats.scenario['Damage Absorbed'] / 100;
 		const armor = fieldScore.Armor * fieldScore['Armor Percent'] / 100;
 		const toughness = fieldScore.Toughness * fieldScore['Toughness Percent'] / 100;
 		const protection = fieldScore.Protection;
@@ -98,12 +98,10 @@ export class CompareService {
 		const crit_chance = bobStats.scenario['Crit Chance'] / 100;
 
 		const melee_reduced = bobStats.scenario.Damage * this.reduced_damage(this.evasion_reduction(evasion));
-		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)) * (resistance / 100));
-		const health_score = melee_damage / health;
-		var score = 1;
-		if (health_score >= 1) {
-			score = 1;
-		} else {
+		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)) * resistance);
+		const injury_score = melee_damage / health;
+		let score = 1;
+		if (injury_score < 1) {
 			const percent_score = (melee_damage - this.regeneration(regeneration) - this.life_drain(life_drain, attack_speed, crit_chance) - bobStats.scenario['Health Regained']) / health;
 			score = percent_score - (bobStats.scenario['Health Regain Percent'] / 100);
 		}
