@@ -27,7 +27,6 @@ export class CompareService {
 		console.timeEnd('build');
 
 		const resp = this.transformIndexesIntoNames(this.bestScores, filteredEquipment)
-		console.log('resp', resp)
 		return of(resp);
 	}
 
