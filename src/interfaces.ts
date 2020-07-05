@@ -34,6 +34,14 @@ export interface DefenseScores {
 	score: number;
 }
 
+export interface EquipmentSelections {
+	boots: {[key:string]: boolean},
+	chestplate: {[key:string]: boolean},
+	helmet: {[key:string]: boolean},
+	leggings: {[key:string]: boolean},
+	offhand: {[key:string]: boolean}
+}
+
 export interface BuildScores {
 	[key: number]: {
 		build: BuildIndex;
@@ -151,5 +159,6 @@ export interface IBoots extends IDefenceInputs {
 export interface IBobInputs {
 	scenario: IScenarioInputs,
 	player: IPlayerInputs,
-	mainhand: IHandheld
+	mainhand: IHandheld,
+	whitelist: EquipmentSelections
 }

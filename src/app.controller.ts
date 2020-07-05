@@ -35,7 +35,8 @@ export class AppController {
 	@Post('/bob/:type')
 	bestOverallBuild(@Body() bobParams: IBobInputs, @Param() params): Observable<BuildScores> {
 		if (params.type === 'defense') {
-			return this.compareService.bobDefense(this.workbooksService.armorStats, bobParams);
+			const filteredStats = this.workbooksService.filterWhitelist(bobParams.whitelist);
+			return this.compareService.bobDefense(filteredStats, bobParams);
 		}
 	}
 }

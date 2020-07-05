@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AllEquipment } from './interfaces';
+import { AllEquipment, EquipmentSelections } from './interfaces';
 
 const fs = require('fs');
 
@@ -14,6 +14,17 @@ export class WorkbooksService {
 	}
 
 	constructor() {
+	}
+
+	filterWhitelist(whitelist: EquipmentSelections): AllEquipment {
+		const all = this.armorStats;
+		return {
+			helmet: all.helmet.filter(item => item.Name in whitelist.helmet),
+			chestplate: all.chestplate.filter(item => item.Name in whitelist.chestplate),
+			leggings: all.leggings.filter(item => item.Name in whitelist.leggings),
+			boots: all.boots.filter(item => item.Name in whitelist.boots),
+			offhand: all.offhand.filter(item => item.Name in whitelist.offhand),
+		}
 	}
 
 	async readArmorStats(): Promise<void> {
