@@ -33,7 +33,7 @@ export class AppController {
 	}
 
 	@Post('/bob/:type')
-	bestOverallBuild(@Body() bobParams: IBobInputs, @Param() params): Observable<BuildScores> {
+	bestOverallBuild(@Body() bobParams: IBobInputs, @Param() params): Observable<any> {
 		if (params.type === 'defense') {
 			const filteredStats = this.workbooksService.filterWhitelist(bobParams.whitelist);
 			return this.compareService.bobDefense(filteredStats, bobParams);

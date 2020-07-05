@@ -16,52 +16,54 @@ export class CompareService {
 	worstBestScore = 10;
 	numScores = 0;
 
-	bobDefense(allEquipment: AllEquipment, bobStats: IBobInputs): Observable<BuildScores> {
+	bobDefense(filteredEquipment: AllEquipment, bobStats: IBobInputs): Observable<any> {
 		console.time('build');
 		this.resetScores();
 
-		let indexes: BuildIndex = { helmet: -1, chestplate: -1, leggings: -1, boots: -1, offhand: -1 };
-		this.deepCompare(allEquipment, indexes, 0, bobStats);
+		let indexes: BuildIndex = {helmet: -1, chestplate: -1, leggings: -1, boots: -1, offhand: -1};
+		this.deepCompare(filteredEquipment, indexes, 0, bobStats);
 
-		this.logBuildScore(this.bestScores, allEquipment);
+		this.logBuildScore(this.bestScores, filteredEquipment);
 		console.timeEnd('build');
 
-		return of(this.bestScores);
+		const resp = this.transformIndexesIntoNames(this.bestScores, filteredEquipment)
+		console.log('resp', resp)
+		return of(resp);
 	}
 
-	private logBuildScore(scores: BuildScores, allEquipment: AllEquipment) {
+	private logBuildScore(scores: BuildScores, filteredEquipment: AllEquipment) {
 		const scoreIndexes = Object.keys(scores).map(score => +score).sort();
 		const bestIdx = scoreIndexes[0];
 		console.log('bestIdx', bestIdx, scoreIndexes)
 		console.log(`
 	best score: ${bestIdx}
 	best build: 
-	${allEquipment.boots[scores[bestIdx][0].build.boots].Name}, 
-	${allEquipment.chestplate[scores[bestIdx][0].build.chestplate].Name},
-	${allEquipment.helmet[scores[bestIdx][0].build.helmet].Name},
-	${allEquipment.leggings[scores[bestIdx][0].build.leggings].Name},
-	${allEquipment.offhand[scores[bestIdx][0].build.offhand].Name}`
+	${filteredEquipment.boots[scores[bestIdx][0].build.boots].Name}, 
+	${filteredEquipment.chestplate[scores[bestIdx][0].build.chestplate].Name},
+	${filteredEquipment.helmet[scores[bestIdx][0].build.helmet].Name},
+	${filteredEquipment.leggings[scores[bestIdx][0].build.leggings].Name},
+	${filteredEquipment.offhand[scores[bestIdx][0].build.offhand].Name}`
 		);
 	}
 
-	private deepCompare(allEquipment: AllEquipment, indexes: BuildIndex, currentSlot, bobStats: IBobInputs): void {
+	private deepCompare(filteredEquipment: AllEquipment, indexes: BuildIndex, currentSlot, bobStats: IBobInputs): void {
 		const slots = ['helmet', 'chestplate', 'leggings', 'boots', 'offhand'];
 		let idx = 0;
-		while (idx < allEquipment[slots[currentSlot]].length) {
+		while (idx < filteredEquipment[slots[currentSlot]].length) {
 			if (currentSlot === 4) {
 				let build = {
-					boots: allEquipment.boots[indexes.boots],
-					chestplate: allEquipment.chestplate[indexes.chestplate],
-					helmet: allEquipment.helmet[indexes.helmet],
-					leggings: allEquipment.leggings[indexes.leggings],
-					offhand: allEquipment.offhand[idx],
+					boots: filteredEquipment.boots[indexes.boots],
+					chestplate: filteredEquipment.chestplate[indexes.chestplate],
+					helmet: filteredEquipment.helmet[indexes.helmet],
+					leggings: filteredEquipment.leggings[indexes.leggings],
+					offhand: filteredEquipment.offhand[idx],
 					player: bobStats.player,
 					mainhand: bobStats.mainhand
 				}
-				this.recordBestScores(this.getScore(build, bobStats), { ...indexes, offhand: idx });
+				this.recordBestScores(this.getScore(build, bobStats), {...indexes, offhand: idx});
 			} else {
 				indexes[slots[currentSlot]] = idx;
-				this.deepCompare(allEquipment, indexes, currentSlot + 1, bobStats);
+				this.deepCompare(filteredEquipment, indexes, currentSlot + 1, bobStats);
 			}
 			idx = idx + 1;
 		}
@@ -105,7 +107,7 @@ export class CompareService {
 			const percent_score = (melee_damage - this.regeneration(regeneration) - this.life_drain(life_drain, attack_speed, crit_chance) - bobStats.scenario['Health Regained']) / health;
 			score = percent_score - (bobStats.scenario['Health Regain Percent'] / 100);
 		}
-		return { armor, toughness, protection, evasion, regeneration, health, score };
+		return {armor, toughness, protection, evasion, regeneration, health, score};
 	}
 
 	private armor_reduction(armor, toughness, damage) {
@@ -141,13 +143,13 @@ export class CompareService {
 	private life_drain(level, attack_speed, crit_chance) {
 		if (attack_speed == 0) {
 			return 0;
-		} else { 
+		} else {
 			const attack_speed_delayed = Math.min(2, 1 / ((1 / attack_speed) + PLAYER_REFLEX_DELAY));
-            const attacks = Math.floor((1 / (0.5 * Math.ceil((1 / attack_speed_delayed) / 0.5))) + 1);
+			const attacks = Math.floor((1 / (0.5 * Math.ceil((1 / attack_speed_delayed) / 0.5))) + 1);
 
 			const life_drain_heal_crit = crit_chance * Math.sqrt(level);
 			const life_drain_heal = 0.25 * (1 - crit_chance) * Math.sqrt(level);
-			
+
 			return attacks * (life_drain_heal_crit + life_drain_heal);
 		}
 	}
@@ -162,7 +164,7 @@ export class CompareService {
 	private recordBestScores(defenseScores: DefenseScores, indexes: BuildIndex) {
 		if (this.numScores > TOP_NUM_OF_SCORES || defenseScores.score < this.worstBestScore) {
 			// Allow multiple builds for same score
-			this.bestScores[defenseScores.score] = [...(this.bestScores[defenseScores.score] || []), { build: indexes, scores: defenseScores }];
+			this.bestScores[defenseScores.score] = [...(this.bestScores[defenseScores.score] || []), {build: indexes, scores: defenseScores}];
 
 			let scores = Object.keys(this.bestScores).map(score => +score).sort();
 			delete this.bestScores[scores[TOP_NUM_OF_SCORES]];
@@ -170,5 +172,26 @@ export class CompareService {
 			this.bestScore = scores[0];
 
 		}
+	}
+
+	private transformIndexesIntoNames(scores: BuildScores, equipment: AllEquipment) {
+		const scoreKeys = Object.keys(scores);
+		let namedScores: BuildScores = {};
+		scoreKeys.forEach(scoreKey => {
+			namedScores[scoreKey] = [];
+			scores[scoreKey].forEach(item => {
+				namedScores[scoreKey].push({
+					build: {
+						helmet: equipment.helmet[item.build.helmet].Name,
+						chestplate: equipment.chestplate[item.build.chestplate].Name,
+						leggings: equipment.leggings[item.build.leggings].Name,
+						boots: equipment.boots[item.build.boots].Name,
+						offhand: equipment.offhand[item.build.offhand].Name,
+					},
+					scores: {...item.scores}
+				})
+			})
+		})
+		return namedScores;
 	}
 }
