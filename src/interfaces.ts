@@ -31,15 +31,8 @@ export interface DefenseScores {
 	evasion: number;
 	regeneration: number;
 	health: number;
+	speed_percent: number;
 	score: number;
-}
-
-export interface EquipmentSelections {
-	boots: {[key:string]: boolean},
-	chestplate: {[key:string]: boolean},
-	helmet: {[key:string]: boolean},
-	leggings: {[key:string]: boolean},
-	offhand: {[key:string]: boolean}
 }
 
 export interface BuildScores {
@@ -57,6 +50,14 @@ export enum Slots {
 	offhand = 'Offhands'
 }
 
+export interface EquipmentSelections {
+	boots: { [key: string]: boolean },
+	chestplate: { [key: string]: boolean },
+	helmet: { [key: string]: boolean },
+	leggings: { [key: string]: boolean },
+	offhand: { [key: string]: boolean }
+}
+
 export interface ITextFields {
 	Name: string;
 	Tier: Tiers;
@@ -70,7 +71,8 @@ export interface IScenarioInputs {
 	'Damage Absorbed': number;
 	'Health Regained': number;
 	'Health Regain Percent': number;
-	'Crit Chance' : number;   
+	'Crit Chance': number;
+	'Minimum Speed': number;
 }
 
 export enum PlayerFields {
@@ -81,7 +83,9 @@ export enum PlayerFields {
 	Toughness = 'Toughness',
 	'Toughness Percent' = 'Toughness Percent',
 	'Attack Speed' = 'Attack Speed',
-	'Attack Speed Percent' = 'Attack Speed Percent'
+	'Attack Speed Percent' = 'Attack Speed Percent',
+	'Speed' = 'Speed',
+	'Speed Percent' = 'Speed Percent'
 }
 
 export type PlayerInputsType = {
@@ -109,6 +113,8 @@ export enum HandheldFields {
 	Regeneration = 'Regeneration',
 	Toughness = 'Toughness',
 	'Toughness Percent' = 'Toughness Percent',
+	'Speed' = 'Speed',
+	'Speed Percent' = 'Speed Percent'
 }
 
 export type HandheldType = {

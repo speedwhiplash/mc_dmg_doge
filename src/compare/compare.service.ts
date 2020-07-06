@@ -7,7 +7,6 @@ interface ScorePerField {
 }
 
 const TOP_NUM_OF_SCORES = 15;
-const PLAYER_REFLEX_DELAY = 0.2;
 
 @Injectable()
 export class CompareService {
@@ -97,16 +96,22 @@ export class CompareService {
 		const health = fieldScore.Health * fieldScore['Health Percent'] / 100;
 		const attack_speed = fieldScore['Attack Speed'] * fieldScore['Attack Speed Percent'] / 100;
 		const crit_chance = bobStats.scenario['Crit Chance'] / 100;
+		const speed_percent = fieldScore.Speed * fieldScore['Speed Percent'] / 10;
 
 		const melee_reduced = bobStats.scenario.Damage * this.reduced_damage(this.evasion_reduction(evasion));
 		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)) * resistance);
 		const injury_score = melee_damage / health;
+
 		let score = 1;
-		if (injury_score < 1) {
-			const percent_score = (melee_damage - this.regeneration(regeneration) - this.life_drain(life_drain, attack_speed, crit_chance) - bobStats.scenario['Health Regained']) / health;
+
+		if ((injury_score < 1) && (speed_percent >= (bobStats.scenario['Minimum Speed'] / 100))) {
+			const health_gain = this.regeneration(regeneration) + this.life_drain(life_drain, attack_speed, crit_chance) + bobStats.scenario['Health Regained'];
+			const percent_score = (melee_damage - health_gain) / health;
+
 			score = percent_score - (bobStats.scenario['Health Regain Percent'] / 100);
 		}
-		return {armor, toughness, protection, evasion, regeneration, health, score};
+
+		return {armor, toughness, protection, evasion, regeneration, health, speed_percent, score};
 	}
 
 	private armor_reduction(armor, toughness, damage) {
@@ -143,8 +148,8 @@ export class CompareService {
 		if (attack_speed == 0) {
 			return 0;
 		} else {
-			const attack_speed_delayed = Math.min(2, 1 / ((1 / attack_speed) + PLAYER_REFLEX_DELAY));
-			const attacks = Math.floor((1 / (0.5 * Math.ceil((1 / attack_speed_delayed) / 0.5))) + 1);
+			const attack_speed_capped = Math.min(2, attack_speed);
+			const attacks = Math.floor((2 / Math.ceil(2 / attack_speed_capped)) + 1);
 
 			const life_drain_heal_crit = crit_chance * Math.sqrt(level);
 			const life_drain_heal = 0.25 * (1 - crit_chance) * Math.sqrt(level);
