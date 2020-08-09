@@ -97,6 +97,8 @@ export class CompareService {
 		const attack_speed = fieldScore['Attack Speed'] * fieldScore['Attack Speed Percent'] / 100;
 		const crit_chance = bobStats.scenario['Crit Chance'] / 100;
 		const speed_percent = fieldScore.Speed * fieldScore['Speed Percent'] / 10;
+		const anemia = fieldScore.Anemia;
+		const corruption = fieldScore.Corruption;
 
 		const melee_reduced = bobStats.scenario.Damage * this.reduced_damage(this.evasion_reduction(evasion));
 		const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * this.reduced_damage(this.armor_reduction(armor, toughness, melee_reduced)) * this.reduced_damage(this.protection_reduction(protection)) * resistance);
@@ -104,8 +106,11 @@ export class CompareService {
 
 		let score = 1;
 
-		if ((injury_score < 1) && (speed_percent >= (bobStats.scenario['Minimum Speed'] / 100))) {
-			const health_gain = this.regeneration(regeneration) + this.life_drain(life_drain, attack_speed, crit_chance) + bobStats.scenario['Health Regained'];
+		if ((injury_score < 1) && (speed_percent >= (bobStats.scenario['Minimum Speed'] / 100)) && (corruption <= 1)) {
+			const regen_gain = (1 - (0.1 * anemia)) * this.regeneration(regeneration);
+			const life_drain_gain = (1 - (0.1 * anemia)) * this.life_drain(life_drain, attack_speed, crit_chance)
+			const other_gain = (1 - (0.1 * anemia)) * bobStats.scenario['Health Regained'];
+			const health_gain = regen_gain + life_drain_gain + other_gain;
 			const percent_score = (melee_damage - health_gain) / health;
 
 			score = percent_score - (bobStats.scenario['Health Regain Percent'] / 100);
@@ -152,7 +157,7 @@ export class CompareService {
 			const attacks = Math.floor((2 / Math.ceil(2 / attack_speed_capped)) + 1);
 
 			const life_drain_heal_crit = crit_chance * Math.sqrt(level);
-			const life_drain_heal = 0.25 * (1 - crit_chance) * Math.sqrt(level);
+			const life_drain_heal = 0.5 * (1 - crit_chance) * Math.sqrt(level);
 
 			return attacks * (life_drain_heal_crit + life_drain_heal);
 		}
