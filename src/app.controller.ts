@@ -33,10 +33,10 @@ export class AppController {
 		return this.workbooksService.armorStats;
 	}
 
-	@Post('/bob/:type')
+	@Post('/bob/:scenario')
 	bestBuildForScenario(@Body() bobParams: IBobInputs, @Param() params): Observable<any> {
 		const filteredStats = this.workbooksService.filterWhitelist(bobParams.whitelist);
-		switch (params.type) {
+		switch (params.scenario) {
 			case 'defense':
 				return this.compareService.runScenario(totalDefenseScore, filteredStats, bobParams);
 		}
