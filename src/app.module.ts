@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { WorkbooksService } from './workbooks.service';
-import { RunSenarioService } from './compare/run-senario.service';
+import { RunScenarioService } from './compare/run-scenario.service';
 import { ShellService } from './shell/shell.service';
 
 @Module({
@@ -13,7 +13,7 @@ import { ShellService } from './shell/shell.service';
 	providers: [
 		AppService,
 		WorkbooksService,
-		RunSenarioService,
+		RunScenarioService,
 		ShellService
 	],
 })

@@ -20,7 +20,11 @@ export const totalDefenseScore = (fieldScore: Dictionary<number>, bobStats: IBob
 
 	let score = 1;
 
-	if ((injury_score < 1) && (speed_percent >= (bobStats.scenario['Minimum Speed'] / 100)) && (corruption <= 1)) {
+	if (
+		(speed_percent >= (bobStats.scenario['Minimum Speed'] / 100)) &&
+		(injury_score < 1) &&
+		(corruption <= 1)
+	) {
 		const regen_gain = (1 - (0.1 * anemia)) * regeneration(fieldScore.Regeneration);
 		const life_drain_gain = (1 - (0.1 * anemia)) * life_drain(fieldScore['Life Drain'], attack_speed, crit_chance)
 		const other_gain = (1 - (0.1 * anemia)) * bobStats.scenario['Health Regained'];

@@ -6,17 +6,21 @@ import { oneResult, transformIndexesIntoNames } from './compare-util';
 const TOP_NUM_OF_SCORES = 15;
 
 @Injectable()
-export class RunSenarioService {
-	bestScore = 9;
+export class RunScenarioService {
+	bestScore: number;
 	bestScores: BuildAttributeScores = {};
-	worstBestScore = 10;
-	numScores = 0;
+	worstBestScore: number;
+	numScores: number;
+
+	constructor() {
+		this.resetScores();
+	}
 
 	runScenario(scenario: Function, filteredEquipment: AllEquipment, bobStats: IBobInputs): Observable<any> {
 		console.time('build');
 		this.resetScores();
 
-		let indexes: BuildIndex = {helmet: -1, chestplate: -1, leggings: -1, boots: -1, offhand: -1};
+		let indexes: BuildIndex = {helmet: null, chestplate: null, leggings: null, boots: null, offhand: null};
 		this.deepCompare(scenario, filteredEquipment, indexes, 0, bobStats);
 
 		this.logBuildScore(this.bestScores, filteredEquipment);
