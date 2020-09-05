@@ -8,6 +8,7 @@ export const totalDefenseScore = (fieldScore: Dictionary<number>, bobStats: IBob
 	const protection = fieldScore.Protection;
 	const evasion = fieldScore.Evasion;
 	const health = fieldScore.Health * fieldScore['Health Percent'] / 100;
+	const base_attack_speed = bobStats.mainhand['Attack Speed'];
 	const attack_speed = fieldScore['Attack Speed'] * fieldScore['Attack Speed Percent'] / 100;
 	const crit_chance = bobStats.scenario['Crit Chance'] / 100;
 	const speed_percent = fieldScore.Speed * fieldScore['Speed Percent'] / 10;
@@ -26,7 +27,7 @@ export const totalDefenseScore = (fieldScore: Dictionary<number>, bobStats: IBob
 		(corruption <= 1)
 	) {
 		const regen_gain = (1 - (0.1 * anemia)) * regeneration(fieldScore.Regeneration);
-		const life_drain_gain = (1 - (0.1 * anemia)) * life_drain(fieldScore['Life Drain'], attack_speed, crit_chance)
+		const life_drain_gain = (1 - (0.1 * anemia)) * life_drain(fieldScore['Life Drain'], base_attack_speed, attack_speed, crit_chance)
 		const other_gain = (1 - (0.1 * anemia)) * bobStats.scenario['Health Regained'];
 		const health_gain = regen_gain + life_drain_gain + other_gain;
 		const percent_score = (melee_damage - health_gain) / health;

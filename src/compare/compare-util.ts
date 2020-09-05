@@ -49,15 +49,15 @@ export const evasion_reduction = (evasion) => {
 	}
 }
 
-export const life_drain = (level, attack_speed, crit_chance) => {
-	if (attack_speed == 0) {
+export const life_drain = (level, base_attack_speed, attack_speed, crit_chance) => {
+	if (base_attack_speed == 0) {
 		return 0;
 	} else {
 		const attack_speed_capped = Math.min(2, attack_speed);
 		const attacks = Math.floor((2 / Math.ceil(2 / attack_speed_capped)) + 1);
 
 		const life_drain_heal_crit = crit_chance * Math.sqrt(level);
-		const life_drain_heal = 0.5 * (1 - crit_chance) * Math.sqrt(level);
+		const life_drain_heal = 0.5 * (1 - crit_chance) * Math.sqrt(level) / Math.sqrt(base_attack_speed);
 
 		return attacks * (life_drain_heal_crit + life_drain_heal);
 	}
