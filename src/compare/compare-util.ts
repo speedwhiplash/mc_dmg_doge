@@ -32,7 +32,7 @@ export const transformIndexesIntoNames = (scores: BuildAttributeScores, equipmen
 }
 
 export const armor_reduction = (armor, toughness, damage) => {
-	return 0.04 * Math.min(20.0, Math.max(armor / 5.0, armor - (damage / (2.0 + (toughness / 4.0)))));
+	return 0.04 * Math.min(20.0, Math.max(armor / 5.0, armor - (damage / (2.0 + (Math.max(0, toughness) / 4.0)))));
 }
 
 export const evasion_reduction = (evasion) => {
