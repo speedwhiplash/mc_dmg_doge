@@ -1,3 +1,7 @@
+export interface Dictionary<T> {
+	[key: string]: T;
+}
+
 export interface AllEquipment {
 	boots: Array<IBoots>;
 	chestplate: Array<IChestplate>;
@@ -24,7 +28,7 @@ export interface BuildIndex {
 	offhand: number;
 }
 
-export interface DefenseScores {
+export interface BuildAttributesScore {
 	armor: number;
 	toughness: number;
 	protection: number;
@@ -35,10 +39,10 @@ export interface DefenseScores {
 	score: number;
 }
 
-export interface BuildScores {
+export interface BuildAttributeScores {
 	[key: number]: {
 		build: BuildIndex;
-		scores: DefenseScores;
+		scores: BuildAttributesScore;
 	}[];
 }
 
@@ -51,11 +55,11 @@ export enum Slots {
 }
 
 export interface EquipmentSelections {
-	boots: { [key: string]: boolean },
-	chestplate: { [key: string]: boolean },
-	helmet: { [key: string]: boolean },
-	leggings: { [key: string]: boolean },
-	offhand: { [key: string]: boolean }
+	boots: Dictionary<boolean>,
+	chestplate: Dictionary<boolean>,
+	helmet: Dictionary<boolean>,
+	leggings: Dictionary<boolean>,
+	offhand: Dictionary<boolean>
 }
 
 export interface ITextFields {

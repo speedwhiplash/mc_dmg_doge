@@ -1,16 +1,17 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
-import { AllEquipment, BuildScores, IBobInputs } from './interfaces';
+import { AllEquipment, IBobInputs } from './interfaces';
 import { AppService } from './app.service';
-import { CompareService } from './compare/compare.service';
+import { RunSenarioService } from './compare/run-senario.service';
 import { WorkbooksService } from './workbooks.service';
+import { totalDefenseScore } from './compare/scenarios/total-defense-score/total-defense-score';
 
 @Controller()
 export class AppController {
 	constructor(
 		private readonly appService: AppService,
-		private readonly compareService: CompareService,
+		private readonly compareService: RunSenarioService,
 		private readonly workbooksService: WorkbooksService,
 	) {
 		this.updateStats();
@@ -32,11 +33,12 @@ export class AppController {
 		return this.workbooksService.armorStats;
 	}
 
-	@Post('/bob/:type')
-	bestOverallBuild(@Body() bobParams: IBobInputs, @Param() params): Observable<any> {
-		if (params.type === 'defense') {
-			const filteredStats = this.workbooksService.filterWhitelist(bobParams.whitelist);
-			return this.compareService.bobDefense(filteredStats, bobParams);
+	@Post('/bob/:scenario')
+	bestBuildForScenario(@Body() bobParams: IBobInputs, @Param() params): Observable<any> {
+		const filteredStats = this.workbooksService.filterWhitelist(bobParams.whitelist);
+		switch (params.scenario) {
+			case 'defense':
+				return this.compareService.runScenario(totalDefenseScore, filteredStats, bobParams);
 		}
 	}
 }
