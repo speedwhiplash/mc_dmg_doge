@@ -6,16 +6,22 @@ import { AppService } from './app.service';
 import { RunScenarioService } from './compare/run-scenario.service';
 import { WorkbooksService } from './workbooks.service';
 import { totalDefenseScore } from './compare/scenarios/total-defense-score/total-defense-score';
+import { getAttribute } from './util';
 
 @Controller()
 export class AppController {
-	port = ((process.argv || []).find((arg) => arg.startsWith('--port')) || '').split('=')[1] || 3000;
+	port = parseInt(getAttribute('port')) || 3000;
+
 	constructor(
 		private readonly appService: AppService,
 		private readonly compareService: RunScenarioService,
 		private readonly workbooksService: WorkbooksService,
 	) {
-		this.updateStats();
+		if (this.port === 3000) {
+			this.appService.updateStats();
+		} else {
+			this.appService.loadStats();
+		}
 	}
 
 	@Get()

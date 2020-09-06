@@ -7,7 +7,6 @@ const TOP_NUM_OF_SCORES = 15;
 
 @Injectable()
 export class RunScenarioService {
-	bestScore: number;
 	bestScores: BuildAttributeScores = {};
 	worstBestScore: number;
 	numScores: number;
@@ -77,21 +76,18 @@ export class RunScenarioService {
 	}
 
 	private resetScores() {
-		this.bestScore = 10;
 		this.bestScores = {};
 		this.numScores = 0;
 		this.worstBestScore = 9;
 	}
 
-	private recordBestScores(defenseScores: BuildAttributesScore, indexes: BuildIndex) {
-		if (this.numScores > TOP_NUM_OF_SCORES || defenseScores.score < this.worstBestScore) {
+	private recordBestScores(buildAttributesScore: BuildAttributesScore, indexes: BuildIndex) {
+		if (buildAttributesScore.score < this.worstBestScore) {
 			// Allow multiple builds for same score
-			this.bestScores[defenseScores.score] = [...(this.bestScores[defenseScores.score] || []), {build: indexes, scores: defenseScores}];
-
+			this.bestScores[buildAttributesScore.score] = [...(this.bestScores[buildAttributesScore.score] || []), {build: indexes, scores: buildAttributesScore}];
 			let scores = Object.keys(this.bestScores).map(score => +score).sort();
 			delete this.bestScores[scores[TOP_NUM_OF_SCORES]];
 			this.worstBestScore = scores[scores.length - 1];
-			this.bestScore = scores[0];
 		}
 	}
 }

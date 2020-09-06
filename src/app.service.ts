@@ -17,4 +17,8 @@ export class AppService {
 		await this.shellService.execShellCommand('python3 prepare.py');
 		return await this.workbooksService.readArmorStats();
 	}
+
+	async loadStats() {
+		return await this.workbooksService.readArmorStats();
+	}
 }
