@@ -26,10 +26,10 @@ export const totalDefenseScore = (fieldScore: Dictionary<number>, bobStats: IBob
 		(injury_score < 1) &&
 		(corruption <= 1)
 	) {
-		const regen_gain = (1 - (0.1 * anemia)) * regeneration(fieldScore.Regeneration);
-		const life_drain_gain = (1 - (0.1 * anemia)) * life_drain(fieldScore['Life Drain'], base_attack_speed, attack_speed, crit_chance)
-		const other_gain = (1 - (0.1 * anemia)) * bobStats.scenario['Health Regained'];
-		const health_gain = regen_gain + life_drain_gain + other_gain;
+		const regen_gain = regeneration(fieldScore.Regeneration);
+		const life_drain_gain = life_drain(fieldScore['Life Drain'], base_attack_speed, attack_speed, crit_chance)
+		const other_gain = bobStats.scenario['Health Regained'];
+		const health_gain = (1 - (0.1 * anemia)) * (regen_gain + life_drain_gain + other_gain);
 		const percent_score = (melee_damage - health_gain) / health;
 
 		score = percent_score - (bobStats.scenario['Health Regain Percent'] / 100);

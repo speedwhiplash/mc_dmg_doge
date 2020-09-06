@@ -24,7 +24,7 @@ export const transformIndexesIntoNames = (scores: BuildAttributeScores, equipmen
 					boots: equipment.boots[item.build.boots].Name,
 					offhand: equipment.offhand[item.build.offhand].Name,
 				},
-				scores: {...item.scores}
+				scores: { ...item.scores }
 			})
 		})
 	})
@@ -32,7 +32,10 @@ export const transformIndexesIntoNames = (scores: BuildAttributeScores, equipmen
 }
 
 export const armor_reduction = (armor, toughness, damage) => {
-	return 0.04 * Math.min(20.0, Math.max(armor / 5.0, armor - (damage / (2.0 + (toughness / 4.0)))));
+	const capped_armor = Math.min(30.0, Math.max(0, armor));
+	const capped_toughness = Math.min(20.0, Math.max(0, toughness));
+
+	return 0.04 * Math.min(20.0, Math.max(capped_armor / 5.0, capped_armor - (damage / (2.0 + (capped_toughness / 4.0)))));
 }
 
 export const evasion_reduction = (evasion) => {
