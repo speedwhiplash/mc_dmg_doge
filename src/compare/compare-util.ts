@@ -75,5 +75,5 @@ export const reduced_damage = (reduction = 0) => {
 }
 
 export const regeneration = (level) => {
-	return Math.floor(Math.sqrt(level));
+	return Math.sqrt(level);
 }
