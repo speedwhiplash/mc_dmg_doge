@@ -31,11 +31,8 @@ export const transformIndexesIntoNames = (scores: BuildAttributeScores, equipmen
 	return namedScores;
 }
 
-export const armor_reduction = (armor, toughness, damage) => {
-	const capped_armor = Math.min(30.0, Math.max(0, armor));
-	const capped_toughness = Math.min(20.0, Math.max(0, toughness));
-
-	return 0.04 * Math.min(20.0, Math.max(capped_armor / 5.0, capped_armor - (damage / (2.0 + (capped_toughness / 4.0)))));
+export const reduced_damage = (reduction = 0) => {
+	return 1 - reduction;
 }
 
 export const evasion_reduction = (evasion) => {
@@ -52,6 +49,64 @@ export const evasion_reduction = (evasion) => {
 	}
 }
 
+export const melee_evasion_reduction = (evasion, melee_evasion) => {
+    return evasion_reduction(evasion + 2*melee_evasion);
+}
+
+export const ability_evasion_reduction = (evasion, ability_evasion) => {
+    return evasion_reduction(evasion + 2*ability_evasion);
+}
+
+export const armor_reduction = (armor, toughness, damage) => {
+	const capped_armor = Math.min(30.0, Math.max(0, armor));
+	const capped_toughness = Math.min(20.0, Math.max(0, toughness));
+
+	return 0.04 * Math.min(20.0, Math.max(capped_armor / 5.0, capped_armor - (damage / (2.0 + (capped_toughness / 4.0)))));
+}
+
+export const protection_reduction = (protection): number => {
+	return protection < 20 ? (protection / 25.0) : 0.80;
+}
+
+export const fire_protection_reduction = (protection, fire_protection) => {
+    return protection_reduction(protection + 2*fire_protection);
+}
+
+export const burn_time_multiplier = (max_fire_protection) => {
+    return max_fire_protection < 6 ? (1 - (0.15 * max_fire_protection)) : 0;
+}
+
+export const blast_protection_reduction = (protection, blast_protection) => {
+    return protection_reduction(protection + 2*blast_protection);
+}
+
+export const explosion_damage = (power, distance, exposure) => {
+    const blast_radius = 0.3 * Math.floor(1.3 * power / 0.225);
+
+    if (distance > 2*power) {
+        return 0;
+    } else {
+        const impact = (1 - (distance / blast_radius)) * exposure;
+        return Math.floor((((impact ** 2) + impact) * 7 * power) + 1);
+    }
+}
+
+export const projectile_protection_reduction = (protection, projectile_protection) => {
+    return protection_reduction(protection + 2*projectile_protection);
+}
+
+export const feather_falling_protection_reduction = (protection, feather_falling_protection) => {
+    return protection_reduction(protection + 3*feather_falling_protection);
+}
+
+export const fall_damage = (distance) => {
+	return distance > 3 ? (distance - 3) : 0;
+}
+
+export const regeneration = (level) => {
+	return Math.sqrt(level);
+}
+
 export const life_drain = (level, base_attack_speed, attack_speed, crit_chance) => {
 	if (base_attack_speed == 0) {
 		return 0;
@@ -66,14 +121,9 @@ export const life_drain = (level, base_attack_speed, attack_speed, crit_chance) 
 	}
 }
 
-export const protection_reduction = (protection): number => {
-	return protection < 20 ? (protection / 25.0) : 0.80;
-}
-
-export const reduced_damage = (reduction = 0) => {
-	return 1 - reduction;
-}
-
-export const regeneration = (level) => {
-	return Math.sqrt(level);
+export const health_gain = (regeneration_level, life_drain_level, base_attack_speed, attack_speed, crit_chance, health_gain, anemia) => {
+    const regen_gain = regeneration(regeneration_level);
+    const life_drain_gain = life_drain(life_drain_level, base_attack_speed, attack_speed, crit_chance)
+    
+    return (1 - (0.1 * anemia)) * (regen_gain + life_drain_gain + health_gain);
 }
