@@ -15,22 +15,26 @@ export const totalDefenseScore = (fieldScore: Dictionary<number>, bobStats: IBob
 	const anemia = fieldScore.Anemia;
 	const corruption = fieldScore.Corruption;
 
-	const melee_reduced = bobStats.scenario.Damage * reduced_damage(evasion_reduction(evasion));
-	const melee_damage = bobStats.scenario['Hits Taken'] * (melee_reduced * reduced_damage(armor_reduction(armor, toughness, melee_reduced)) * reduced_damage(protection_reduction(protection)) * resistance);
-	const injury_score = melee_damage / health;
+	const worst_melee_reduced = bobStats.scenario.Damage * reduced_damage(evasion_reduction(evasion));
+	const worst_melee_damage = bobStats.scenario['Hits Taken'] * (worst_melee_reduced * reduced_damage(armor_reduction(armor, toughness, worst_melee_reduced)) * reduced_damage(protection_reduction(protection)) * resistance);
+	const worst_injury_score = worst_melee_damage / health;
+
+	const best_melee_reduced = bobStats.scenario.Damage * reduced_damage(evasion_reduction(evasion + 5));
+	const best_melee_damage = bobStats.scenario['Hits Taken'] * (best_melee_reduced * reduced_damage(armor_reduction(armor, toughness, best_melee_reduced)) * reduced_damage(protection_reduction(protection)) * resistance);
 
 	let score = 1;
 
 	if (
 		(speed_percent >= (bobStats.scenario['Minimum Speed'] / 100)) &&
-		(injury_score < 1) &&
+		(worst_injury_score < 1) &&
 		(corruption <= 1)
 	) {
 		const regen_gain = regeneration(fieldScore.Regeneration);
 		const life_drain_gain = life_drain(fieldScore['Life Drain'], base_attack_speed, attack_speed, crit_chance)
 		const other_gain = bobStats.scenario['Health Regained'];
 		const health_gain = (1 - (0.1 * anemia)) * (regen_gain + life_drain_gain + other_gain);
-		const percent_score = (melee_damage - health_gain) / health;
+		const average_melee_damage = ((1 - 0.2 * (evasion % 5)) * worst_melee_damage) + (((0.2 * (evasion % 5)) * best_melee_damage));
+		const percent_score = (average_melee_damage - health_gain) / health;
 
 		score = percent_score - (bobStats.scenario['Health Regain Percent'] / 100);
 	}
