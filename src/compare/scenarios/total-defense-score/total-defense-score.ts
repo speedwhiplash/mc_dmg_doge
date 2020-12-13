@@ -37,7 +37,7 @@ export const totalDefenseScore = (fieldScore: Dictionary<number>, bobStats: IBob
 		const average_melee_damage = worst_melee_damage + ((0.2 * (evasion % 5)) * (best_melee_damage - worst_melee_damage));
 		const percent_score = (average_melee_damage - health_gain) / health;
 
-		score = percent_score - (bobStats.scenario['Health Regain Percent'] / 100);
+		score = percent_score - ((1 - (0.1 * anemia)) * bobStats.scenario['Health Regain Percent'] / 100);
 	}
 
 	return {armor, toughness, protection, evasion, regeneration: fieldScore.Regeneration, health, speed_percent, score};
