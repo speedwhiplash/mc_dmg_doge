@@ -60,8 +60,9 @@ export const ability_evasion_reduction = (evasion, ability_evasion) => {
 export const armor_reduction = (armor, toughness, damage) => {
 	const capped_armor = Math.min(30.0, Math.max(0, armor));
 	const capped_toughness = Math.min(20.0, Math.max(0, toughness));
+	const capped_damage = (damage > 16) ? (4 * Math.log2(damage)) : damage;
 
-	return 0.04 * Math.min(20.0, Math.max(capped_armor / 5.0, capped_armor - (damage / (2.0 + (capped_toughness / 4.0)))));
+	return 0.04 * Math.min(20.0, Math.max(capped_armor / 5.0, capped_armor - (capped_damage / (2.0 + (capped_toughness / 4.0)))));
 }
 
 export const protection_reduction = (protection): number => {
@@ -86,7 +87,8 @@ export const explosion_damage = (power, distance, exposure) => {
     if (distance > 2*power) {
         return 0;
     } else {
-        const impact = (1 - (distance / blast_radius)) * exposure;
+		const impact = (1 - (distance / blast_radius)) * exposure;
+		//exposure is roughly the percentage of the block containing the player's feet that has line-of-sight with the explosion 
         return Math.floor((((impact ** 2) + impact) * 7 * power) + 1);
     }
 }
